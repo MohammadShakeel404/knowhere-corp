@@ -1,10 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import { AIService } from '@/services/AIService';
 import { BusinessAnalyticsService } from '@/services/BusinessAnalyticsService';
@@ -20,8 +19,10 @@ import {
   MessageSquare,
   Loader2,
   Download,
-  Filter,
-  Search
+  Search,
+  RefreshCw,
+  AlertCircle,
+  CheckCircle
 } from 'lucide-react';
 
 interface AIInsight {
@@ -43,10 +44,12 @@ const AIBusinessDashboard = () => {
   const [context, setContext] = useState('');
   const [selectedType, setSelectedType] = useState<'analysis' | 'recommendation' | 'automation' | 'general'>('general');
   const [isLoading, setIsLoading] = useState(false);
-  const [apiKey, setApiKey] = useState(AIService.getApiKey() || '');
+  const [apiKey, setApiKey] = useState('');
   const [isKeyValid, setIsKeyValid] = useState(false);
+  const [isTestingKey, setIsTestingKey] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
 
   const analysisTypes = [
     { value: 'analysis', label: 'Business Analysis', icon: BarChart3, color: 'from-blue-500 to-cyan-500' },
@@ -55,15 +58,34 @@ const AIBusinessDashboard = () => {
     { value: 'general', label: 'General Business', icon: MessageSquare, color: 'from-orange-500 to-red-500' }
   ];
 
+  // Check for existing API key on component mount
+  useEffect(() => {
+    const existingKey = AIService.getApiKey();
+    if (existingKey) {
+      setApiKey(existingKey);
+      setIsKeyValid(true);
+    } else {
+      setShowApiKeyInput(true);
+    }
+  }, []);
+
   const handleApiKeySubmit = async () => {
-    if (!apiKey.trim()) return;
+    if (!apiKey.trim()) {
+      toast({
+        title: "Missing API Key",
+        description: "Please enter your OpenAI API key",
+        variant: "destructive",
+      });
+      return;
+    }
     
-    setIsLoading(true);
+    setIsTestingKey(true);
     try {
       const isValid = await AIService.testApiKey(apiKey);
       if (isValid) {
         AIService.saveApiKey(apiKey);
         setIsKeyValid(true);
+        setShowApiKeyInput(false);
         toast({
           title: "Success",
           description: "OpenAI API key validated and saved successfully",
@@ -78,11 +100,11 @@ const AIBusinessDashboard = () => {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to validate API key",
+        description: "Failed to validate API key. Please check your internet connection and try again.",
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsTestingKey(false);
     }
   };
 
@@ -99,23 +121,15 @@ const AIBusinessDashboard = () => {
     setIsLoading(true);
     try {
       const response = await AIService.generateBusinessInsight({
-        prompt,
-        context,
+        prompt: prompt.trim(),
+        context: context.trim() || undefined,
         type: selectedType
       });
 
       const { category, priority } = BusinessAnalyticsService.categorizeInsight(response.content, selectedType);
       
-      // Extract action items from the response
-      const actionItems = response.content
-        .split('\n')
-        .filter(line => line.includes('action:') || line.includes('do:') || line.includes('implement:'))
-        .map(line => line.replace(/.*?action:|.*?do:|.*?implement:/, '').trim())
-        .filter(item => item.length > 0)
-        .slice(0, 3);
-
       const newInsight: AIInsight = {
-        id: crypto.randomUUID(),
+        id: BusinessAnalyticsService.generateInsightId(),
         type: selectedType,
         content: response.content,
         confidence: response.confidence,
@@ -123,17 +137,19 @@ const AIBusinessDashboard = () => {
         timestamp: new Date(),
         category,
         priority,
-        actionItems: actionItems.length > 0 ? actionItems : undefined
+        actionItems: response.actionItems
       };
 
       setInsights(prev => [newInsight, ...prev]);
       setPrompt('');
+      setContext('');
       
       toast({
         title: "AI Insight Generated",
-        description: "Your business insight has been generated successfully",
+        description: `Your ${selectedType} insight has been generated successfully`,
       });
     } catch (error) {
+      console.error('Error generating insight:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to generate insight",
@@ -145,29 +161,38 @@ const AIBusinessDashboard = () => {
   };
 
   const handleExportInsight = (insight: AIInsight) => {
-    const data = {
-      timestamp: insight.timestamp.toISOString(),
-      type: insight.type,
-      category: insight.category,
-      priority: insight.priority,
-      confidence: insight.confidence,
-      content: insight.content,
-      suggestions: insight.suggestions,
-      actionItems: insight.actionItems
-    };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `insight-${insight.id}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    toast({
-      title: "Insight Exported",
-      description: "Insight has been exported successfully",
-    });
+    try {
+      const data = {
+        id: insight.id,
+        timestamp: insight.timestamp.toISOString(),
+        type: insight.type,
+        category: insight.category,
+        priority: insight.priority,
+        confidence: insight.confidence,
+        content: insight.content,
+        suggestions: insight.suggestions,
+        actionItems: insight.actionItems
+      };
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `insight-${insight.id}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Insight Exported",
+        description: "Insight has been exported successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: "Failed to export insight. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSaveInsight = (insight: AIInsight) => {
@@ -179,18 +204,46 @@ const AIBusinessDashboard = () => {
   };
 
   const handleExportAll = () => {
-    const csvContent = BusinessAnalyticsService.exportInsights(insights);
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'business-insights.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-    
+    if (insights.length === 0) {
+      toast({
+        title: "No Data",
+        description: "No insights available to export",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const csvContent = BusinessAnalyticsService.exportInsights(insights);
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `business-insights-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "All Insights Exported",
+        description: "All insights have been exported to CSV",
+      });
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: "Failed to export insights. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleResetApiKey = () => {
+    AIService.clearApiKey();
+    setApiKey('');
+    setIsKeyValid(false);
+    setShowApiKeyInput(true);
     toast({
-      title: "All Insights Exported",
-      description: "All insights have been exported to CSV",
+      title: "API Key Reset",
+      description: "API key has been cleared. Please enter a new one.",
     });
   };
 
@@ -199,19 +252,18 @@ const AIBusinessDashboard = () => {
   };
 
   const filteredInsights = insights.filter(insight => {
-    const matchesSearch = insight.content.toLowerCase().includes(searchFilter.toLowerCase()) ||
-                         insight.category?.toLowerCase().includes(searchFilter.toLowerCase());
+    const matchesSearch = !searchFilter || 
+      insight.content.toLowerCase().includes(searchFilter.toLowerCase()) ||
+      insight.category?.toLowerCase().includes(searchFilter.toLowerCase()) ||
+      insight.type.toLowerCase().includes(searchFilter.toLowerCase());
     const matchesType = typeFilter === 'all' || insight.type === typeFilter;
     return matchesSearch && matchesType;
   });
 
   const analytics = BusinessAnalyticsService.generateAnalytics(insights);
 
-  React.useEffect(() => {
-    setIsKeyValid(!!AIService.getApiKey());
-  }, []);
-
-  if (!isKeyValid) {
+  // API Key Setup Screen
+  if (!isKeyValid || showApiKeyInput) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
         <div className="max-w-2xl mx-auto">
@@ -232,14 +284,15 @@ const AIBusinessDashboard = () => {
                   onChange={(e) => setApiKey(e.target.value)}
                   placeholder="sk-..."
                   className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                  onKeyPress={(e) => e.key === 'Enter' && handleApiKeySubmit()}
                 />
               </div>
               <Button 
                 onClick={handleApiKeySubmit}
-                disabled={isLoading || !apiKey.trim()}
+                disabled={isTestingKey || !apiKey.trim()}
                 className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
               >
-                {isLoading ? (
+                {isTestingKey ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Validating...
@@ -251,12 +304,15 @@ const AIBusinessDashboard = () => {
                   </>
                 )}
               </Button>
-              <p className="text-xs text-white/40 text-center">
-                Get your API key from{' '}
-                <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300">
-                  OpenAI Platform
-                </a>
-              </p>
+              <div className="text-xs text-white/40 text-center space-y-2">
+                <p>
+                  Get your API key from{' '}
+                  <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 underline">
+                    OpenAI Platform
+                  </a>
+                </p>
+                <p>Your API key is stored locally and never shared with our servers.</p>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -268,9 +324,20 @@ const AIBusinessDashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-2">AI Business Manager</h1>
-          <p className="text-white/60">Leverage AI to optimize your business operations and strategy</p>
+        <div className="flex justify-between items-center">
+          <div className="text-center flex-1">
+            <h1 className="text-4xl font-bold text-white mb-2">AI Business Manager</h1>
+            <p className="text-white/60">Leverage AI to optimize your business operations and strategy</p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={handleResetApiKey}
+            className="text-white/70 border-white/20 hover:bg-white/10"
+            size="sm"
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Change API Key
+          </Button>
         </div>
 
         {/* Statistics Dashboard */}
@@ -313,20 +380,20 @@ const AIBusinessDashboard = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Business Question or Scenario</label>
+              <label className="text-sm font-medium text-white/80">Business Question or Scenario *</label>
               <Textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="e.g., How can I improve customer retention in my SaaS business?"
+                placeholder="e.g., How can I improve customer retention in my SaaS business? What are the key metrics I should track?"
                 className="bg-white/5 border-white/20 text-white placeholder:text-white/40 min-h-[100px]"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Context (Optional)</label>
+              <label className="text-sm font-medium text-white/80">Additional Context (Optional)</label>
               <Textarea
                 value={context}
                 onChange={(e) => setContext(e.target.value)}
-                placeholder="Provide additional context about your business, industry, or specific situation..."
+                placeholder="Provide additional context about your business, industry, size, current challenges, or specific situation..."
                 className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
               />
             </div>
@@ -351,10 +418,10 @@ const AIBusinessDashboard = () => {
         </Card>
 
         {/* Insights Display */}
-        {insights.length > 0 && (
+        {insights.length > 0 ? (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">AI Generated Insights</h2>
+              <h2 className="text-2xl font-bold text-white">AI Generated Insights ({filteredInsights.length})</h2>
               <Button
                 onClick={handleExportAll}
                 variant="outline"
@@ -366,7 +433,7 @@ const AIBusinessDashboard = () => {
             </div>
 
             {/* Filters */}
-            <div className="flex space-x-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
                   <Search className="w-4 h-4 absolute left-3 top-3 text-white/40" />
@@ -390,16 +457,36 @@ const AIBusinessDashboard = () => {
               </select>
             </div>
 
-            {filteredInsights.map((insight) => (
-              <BusinessInsightCard
-                key={insight.id}
-                insight={insight}
-                typeConfig={getTypeConfig(insight.type)}
-                onExport={handleExportInsight}
-                onSave={handleSaveInsight}
-              />
-            ))}
+            {filteredInsights.length > 0 ? (
+              filteredInsights.map((insight) => (
+                <BusinessInsightCard
+                  key={insight.id}
+                  insight={insight}
+                  typeConfig={getTypeConfig(insight.type)}
+                  onExport={handleExportInsight}
+                  onSave={handleSaveInsight}
+                />
+              ))
+            ) : (
+              <Card className="bg-gradient-to-br from-white/5 to-white/2 border-white/20 backdrop-blur-xl">
+                <CardContent className="p-8 text-center">
+                  <AlertCircle className="w-12 h-12 text-white/40 mx-auto mb-4" />
+                  <p className="text-white/60">No insights match your current filters.</p>
+                </CardContent>
+              </Card>
+            )}
           </div>
+        ) : (
+          <Card className="bg-gradient-to-br from-white/5 to-white/2 border-white/20 backdrop-blur-xl">
+            <CardContent className="p-12 text-center">
+              <Brain className="w-16 h-16 text-white/40 mx-auto mb-6" />
+              <h3 className="text-xl font-semibold text-white mb-2">Ready to Generate Your First Insight?</h3>
+              <p className="text-white/60 mb-6">Ask any business question and get AI-powered analysis, recommendations, or automation suggestions.</p>
+              <div className="text-sm text-white/40">
+                <p>💡 Try asking about customer retention, process optimization, or market analysis</p>
+              </div>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
