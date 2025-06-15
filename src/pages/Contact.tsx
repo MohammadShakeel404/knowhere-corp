@@ -1,4 +1,3 @@
-
 import { Navigation } from "@/components/Navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,19 +39,19 @@ const Contact = () => {
     {
       icon: Mail,
       title: "Email Us",
-      value: "hello@marketingai.com",
+      value: "info.knowherecorp@gmail.com",
       description: "Send us an email anytime"
     },
     {
       icon: Phone,
       title: "Call Us",
-      value: "+1 (555) 123-4567",
-      description: "Mon-Fri from 8am to 6pm PST"
+      value: "+917470712404",
+      description: "Mon-Fri from 8am to 6pm IST"
     },
     {
       icon: MapPin,
       title: "Visit Us",
-      value: "123 Innovation Drive, San Francisco, CA 94105",
+      value: "Bhilai, CG, INDIA, 490020",
       description: "Come say hello at our office"
     },
     {
