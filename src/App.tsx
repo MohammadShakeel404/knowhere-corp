@@ -14,6 +14,7 @@ import Signup from '@/pages/Signup';
 import Profile from '@/pages/Profile';
 import NotFound from '@/pages/NotFound';
 import AIBusiness from '@/pages/AIBusiness';
+import AIBusinessBranding from '@/pages/AIBusinessBranding';
 import ServiceDetails from '@/pages/ServiceDetails';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from "@/components/ui/toaster"

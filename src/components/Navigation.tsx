@@ -1,206 +1,168 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
+import { Link } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from "@/hooks/use-toast";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
-import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button"
 
-const Navigation: React.FC = () => {
+const Navigation = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const handleSignOut = async () => {
-    try {
-      const { error } = await signOut();
-      if (error) {
-        toast({
-          title: "Sign Out Failed",
-          description: error.message || "Failed to sign out",
-          variant: "destructive"
-        });
-      } else {
-        toast({
-          title: "Signed Out",
-          description: "You have been successfully signed out."
-        });
-        navigate('/');
-      }
-    } catch (err) {
-      console.error('Sign out error:', err);
-      toast({
-        title: "Sign Out Failed",
-        description: "An unexpected error occurred",
-        variant: "destructive"
-      });
-    }
-  };
 
   return (
-    <nav className="bg-black/70 backdrop-blur-md fixed top-0 left-0 w-full z-50 border-b border-gray-800">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0">
-              <span className="font-semibold text-xl text-white">Knowhere Corp</span>
-            </Link>
-          </div>
+        <div className="flex justify-between items-center h-16">
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+              <span className="text-black font-bold text-sm">K</span>
+            </div>
+            <span className="text-white font-semibold text-lg">Knowhere Corp</span>
+          </Link>
 
-          <div className="hidden md:flex space-x-8">
-            <Link
-              to="/"
-              className={`transition-colors ${
-                location.pathname === "/" ? "text-blue-300" : "text-gray-300 hover:text-white"
-              }`}
-            >
-              Home
-            </Link>
-            <Link
-              to="/features"
-              className={`transition-colors ${
-                location.pathname === "/features" ? "text-blue-300" : "text-gray-300 hover:text-white"
-              }`}
-            >
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            <Link to="/features" className="text-gray-300 hover:text-white transition-colors">
               Features
             </Link>
-            <Link
-              to="/ai"
-              className={`transition-colors ${
-                location.pathname === "/ai" ? "text-blue-300" : "text-gray-300 hover:text-white"
-              }`}
-            >
-              AI
+            <Link to="/ai" className="text-gray-300 hover:text-white transition-colors">
+              AI Assistant
             </Link>
-            <Link
-              to="/ai-business"
-              className={`transition-colors ${
-                location.pathname === "/ai-business" ? "text-blue-300" : "text-gray-300 hover:text-white"
-              }`}
-            >
-              AI Manager
+            <Link to="/ai-business" className="text-gray-300 hover:text-white transition-colors">
+              Business AI
             </Link>
-            <Link
-              to="/pricing"
-              className={`transition-colors ${
-                location.pathname === "/pricing" ? "text-blue-300" : "text-gray-300 hover:text-white"
-              }`}
-            >
+            <Link to="/ai-branding" className="text-gray-300 hover:text-white transition-colors">
+              AI Branding
+            </Link>
+            <Link to="/pricing" className="text-gray-300 hover:text-white transition-colors">
               Pricing
             </Link>
-            <Link
-              to="/about"
-              className={`transition-colors ${
-                location.pathname === "/about" ? "text-blue-300" : "text-gray-300 hover:text-white"
-              }`}
-            >
+            <Link to="/about" className="text-gray-300 hover:text-white transition-colors">
               About
             </Link>
-          </div>
+            <Link to="/contact" className="text-gray-300 hover:text-white transition-colors">
+              Contact
+            </Link>
 
-          <div className="flex items-center space-x-4">
             {user ? (
-              <>
-                <Link to="/profile">
-                  <Button variant="ghost" className="text-gray-300 hover:text-white transition-colors">
-                    Profile
-                  </Button>
+              <div className="flex items-center space-x-4">
+                <Link to="/profile" className="text-gray-300 hover:text-white transition-colors">
+                  Profile
                 </Link>
-                <Button 
-                  onClick={handleSignOut} 
-                  variant="outline" 
-                  className="border-gray-400 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
-                >
+                <Button variant="outline" size="sm" className="text-gray-300 hover:text-white border-gray-500 hover:border-white transition-colors" onClick={signOut}>
                   Sign Out
                 </Button>
-              </>
+              </div>
             ) : (
-              <>
-                <Link to="/login">
-                  <Button variant="ghost" className="text-gray-300 hover:text-white transition-colors">
-                    Log In
-                  </Button>
+              <div className="flex items-center space-x-4">
+                <Link to="/login" className="text-gray-300 hover:text-white transition-colors">
+                  Log In
                 </Link>
-                <Link to="/signup">
-                  <Button variant="outline" className="border-gray-400 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-                    Sign Up
-                  </Button>
+                <Link to="/signup" className="text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md transition-colors">
+                  Sign Up
                 </Link>
-              </>
+              </div>
             )}
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" className="hover:bg-gray-800 text-gray-300 hover:text-white">
-                  <Menu className="w-5 h-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="bg-black border-r border-gray-800 text-white">
-                <SheetHeader>
-                  <SheetTitle>Menu</SheetTitle>
-                  <SheetDescription>
-                    Navigate through the application
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="grid gap-4 py-4">
-                  <Link to="/" className="hover:text-blue-300 transition-colors block py-2">
-                    Home
-                  </Link>
-                  <Link to="/features" className="hover:text-blue-300 transition-colors block py-2">
-                    Features
-                  </Link>
-                  <Link to="/ai" className="hover:text-blue-300 transition-colors block py-2">
-                    AI
-                  </Link>
-                  <Link to="/ai-business" className="hover:text-blue-300 transition-colors block py-2">
-                    AI Manager
-                  </Link>
-                  <Link to="/pricing" className="hover:text-blue-300 transition-colors block py-2">
-                    Pricing
-                  </Link>
-                  <Link to="/about" className="hover:text-blue-300 transition-colors block py-2">
-                    About
-                  </Link>
-                  {user ? (
-                    <>
-                      <Link to="/profile" className="hover:text-blue-300 transition-colors block py-2">
-                        Profile
-                      </Link>
-                      <Button 
-                        onClick={handleSignOut} 
-                        variant="outline" 
-                        className="border-gray-400 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors w-full"
-                      >
-                        Sign Out
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Link to="/login" className="hover:text-blue-300 transition-colors block py-2">
-                        Log In
-                      </Link>
-                      <Link to="/signup" className="hover:text-blue-300 transition-colors block py-2">
-                        Sign Up
-                      </Link>
-                    </>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-gray-300 hover:text-white focus:outline-none focus:text-white"
+            >
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation */}
+        {isOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-black/95 rounded-lg mt-2">
+              <Link
+                to="/features"
+                className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium"
+                onClick={() => setIsOpen(false)}
+              >
+                Features
+              </Link>
+              <Link
+                to="/ai"
+                className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium"
+                onClick={() => setIsOpen(false)}
+              >
+                AI Assistant
+              </Link>
+              <Link
+                to="/ai-business"
+                className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium"
+                onClick={() => setIsOpen(false)}
+              >
+                Business AI
+              </Link>
+              <Link
+                to="/ai-branding"
+                className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium"
+                onClick={() => setIsOpen(false)}
+              >
+                AI Branding
+              </Link>
+              <Link
+                to="/pricing"
+                className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium"
+                onClick={() => setIsOpen(false)}
+              >
+                Pricing
+              </Link>
+              <Link
+                to="/about"
+                className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium"
+                onClick={() => setIsOpen(false)}
+              >
+                About
+              </Link>
+              <Link
+                to="/contact"
+                className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium"
+                onClick={() => setIsOpen(false)}
+              >
+                Contact
+              </Link>
+
+              {user ? (
+                <div className="pt-4 border-t border-gray-700">
+                  <Link
+                    to="/profile"
+                    className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                  <Button variant="outline" size="sm" className="w-full mt-2 text-gray-300 hover:text-white border-gray-500 hover:border-white transition-colors" onClick={signOut}>
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <div className="mt-3 space-y-2">
+                  <Link
+                    to="/login"
+                    className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="text-white bg-green-500 hover:bg-green-600 block px-3 py-2 rounded-md transition-colors text-center"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );
