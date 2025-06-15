@@ -7,7 +7,7 @@ import { ServiceCard } from "@/components/ServiceCard";
 import { HeroSection } from "@/components/HeroSection";
 import { StatsSection } from "@/components/StatsSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
-import { Navigation } from "@/components/Navigation";
+import Navigation from "@/components/Navigation";
 import { Link } from "react-router-dom";
 
 const Index = () => {

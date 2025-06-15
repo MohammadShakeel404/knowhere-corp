@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, Palette, Share2, Megaphone, Code, Image, TrendingUp, Brain, ArrowRight } from "lucide-react";
 import { ServiceCard } from "@/components/ServiceCard";
-import { Navigation } from "@/components/Navigation";
+import Navigation from "@/components/Navigation";
 import { Link } from "react-router-dom";
 
 const Features = () => {
