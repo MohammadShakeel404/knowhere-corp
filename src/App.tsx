@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Index from '@/pages/Index';
@@ -16,6 +15,7 @@ import NotFound from '@/pages/NotFound';
 import AIBusiness from '@/pages/AIBusiness';
 import AIBusinessBranding from '@/pages/AIBusinessBranding';
 import ServiceDetails from '@/pages/ServiceDetails';
+import Admin from '@/pages/Admin';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -35,6 +35,7 @@ function App() {
               <Route path="/ai" element={<AI />} />
               <Route path="/ai-business" element={<AIBusiness />} />
               <Route path="/ai-branding" element={<AIBusinessBranding />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
