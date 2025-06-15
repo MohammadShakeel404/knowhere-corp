@@ -12,22 +12,16 @@ import {
   Lightbulb, 
   BarChart3, 
   Zap, 
-  Settings, 
   Search,
-  Filter,
   Download,
-  Star,
   Loader2,
   AlertCircle,
-  CheckCircle,
   TrendingUp,
-  Database,
   MessageSquare,
   Target,
-  Menu,
   Sparkles,
   RefreshCw,
-  Trash2
+  Plus
 } from 'lucide-react';
 import { SupabaseAIService } from '@/services/SupabaseAIService';
 import { BusinessAnalyticsService } from '@/services/BusinessAnalyticsService';
@@ -60,13 +54,12 @@ const AIBusinessDashboard: React.FC = () => {
   const [isLoadingInsights, setIsLoadingInsights] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const analysisTypes = [
-    { value: 'analysis', label: 'Business Analysis', icon: BarChart3, color: 'from-blue-500 to-cyan-500', description: 'Data-driven insights and performance metrics' },
-    { value: 'recommendation', label: 'Strategic Recommendations', icon: Lightbulb, color: 'from-green-500 to-emerald-500', description: 'Actionable strategies and next steps' },
-    { value: 'automation', label: 'Process Automation', icon: Zap, color: 'from-purple-500 to-pink-500', description: 'Streamline workflows and operations' },
-    { value: 'general', label: 'General Business', icon: MessageSquare, color: 'from-orange-500 to-red-500', description: 'General business guidance and advice' }
+    { value: 'analysis', label: 'Analysis', icon: BarChart3, color: 'from-blue-500 to-cyan-500' },
+    { value: 'recommendation', label: 'Strategy', icon: Lightbulb, color: 'from-green-500 to-emerald-500' },
+    { value: 'automation', label: 'Automation', icon: Zap, color: 'from-purple-500 to-pink-500' },
+    { value: 'general', label: 'General', icon: MessageSquare, color: 'from-orange-500 to-red-500' }
   ];
 
   // Load user insights on component mount
@@ -275,21 +268,21 @@ const AIBusinessDashboard: React.FC = () => {
   // Show login message if not authenticated
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
-        <div className="container mx-auto max-w-lg">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-3 sm:p-6">
+        <div className="container mx-auto max-w-md">
           <Card className="shadow-xl border-0 bg-white">
-            <CardHeader className="text-center pb-6">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-                <Brain className="w-8 h-8 text-white" />
+            <CardHeader className="text-center pb-4">
+              <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                <Brain className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-2xl font-bold text-gray-800 mb-2">
+              <CardTitle className="text-xl font-bold text-gray-800 mb-1">
                 AI Business Manager
               </CardTitle>
-              <p className="text-gray-600">Please sign in to access your AI business insights</p>
+              <p className="text-gray-600 text-sm">Please sign in to access your AI business insights</p>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                <p className="text-sm text-blue-700 text-center">
+            <CardContent className="p-4">
+              <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                <p className="text-xs text-blue-700 text-center">
                   🔐 Sign in to generate insights, save them securely, and access your personalized business dashboard.
                 </p>
               </div>
@@ -302,104 +295,103 @@ const AIBusinessDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
-        {/* Header Section */}
-        <div className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+      <div className="container mx-auto px-3 sm:px-6 py-4 max-w-7xl">
+        {/* Compact Header */}
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div>
-              <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">
                 AI Business Manager
               </h1>
-              <p className="text-gray-600 text-base lg:text-lg">
-                Get intelligent insights and recommendations for your business
+              <p className="text-gray-600 text-sm">
+                Get intelligent insights for your business
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <SupabaseStatus />
-            </div>
+            <SupabaseStatus />
           </div>
 
-          {/* Quick Stats */}
-          <BusinessDashboardStats analytics={analytics} />
+          {/* Compact Stats */}
+          {analytics.totalInsights > 0 && (
+            <BusinessDashboardStats analytics={analytics} />
+          )}
         </div>
 
-        {/* Main Content */}
-        <Tabs defaultValue="generate" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-3 h-auto p-1 bg-white/50 backdrop-blur-sm border border-gray-200/50">
+        {/* Responsive Tabs */}
+        <Tabs defaultValue="generate" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-white/70 backdrop-blur-sm">
             <TabsTrigger 
               value="generate" 
-              className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+              className="flex items-center gap-1 py-2 px-2 text-xs sm:text-sm data-[state=active]:bg-white"
             >
-              <Brain className="w-4 h-4" />
-              <span className="hidden sm:inline">Generate</span>
+              <Plus className="w-3 h-3" />
+              <span>Generate</span>
             </TabsTrigger>
             <TabsTrigger 
               value="insights" 
-              className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+              className="flex items-center gap-1 py-2 px-2 text-xs sm:text-sm data-[state=active]:bg-white"
             >
-              <Lightbulb className="w-4 h-4" />
-              <span className="hidden sm:inline">Insights</span>
+              <Lightbulb className="w-3 h-3" />
+              <span>Insights</span>
               {insights.length > 0 && (
-                <Badge variant="secondary" className="ml-1 text-xs">
+                <Badge variant="secondary" className="text-xs">
                   {insights.length}
                 </Badge>
               )}
             </TabsTrigger>
             <TabsTrigger 
               value="analytics" 
-              className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+              className="flex items-center gap-1 py-2 px-2 text-xs sm:text-sm data-[state=active]:bg-white"
             >
-              <BarChart3 className="w-4 h-4" />
-              <span className="hidden sm:inline">Analytics</span>
+              <BarChart3 className="w-3 h-3" />
+              <span>Analytics</span>
             </TabsTrigger>
           </TabsList>
 
-          {/* Generate Tab */}
-          <TabsContent value="generate" className="space-y-6">
+          {/* Generate Tab - Compact Form */}
+          <TabsContent value="generate" className="space-y-4">
             <Card className="shadow-lg border-0 bg-white">
-              <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-t-lg pb-4">
-                <CardTitle className="flex items-center text-lg">
-                  <Target className="w-5 h-5 mr-2" />
-                  Business Intelligence Query
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center text-base">
+                  <Target className="w-4 h-4 mr-2" />
+                  Business Query
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-4 md:p-6 space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 flex items-center">
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    Business Question or Scenario *
+              <CardContent className="space-y-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-gray-700">
+                    Question *
                   </label>
                   <Textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="e.g., How can I improve customer retention in my SaaS business?"
-                    className="min-h-[100px] border-2 border-gray-200 focus:border-blue-500 transition-colors resize-none text-sm"
+                    placeholder="How can I improve customer retention?"
+                    className="min-h-[80px] text-sm resize-none"
+                    rows={3}
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 flex items-center">
-                    <BarChart3 className="w-4 h-4 mr-2" />
-                    Additional Context (Optional)
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-gray-700">
+                    Context (Optional)
                   </label>
                   <Textarea
                     value={context}
                     onChange={(e) => setContext(e.target.value)}
-                    placeholder="Provide context about your business, industry, size, challenges..."
-                    className="border-2 border-gray-200 focus:border-blue-500 transition-colors resize-none text-sm"
-                    rows={3}
+                    placeholder="Additional business context..."
+                    className="text-sm resize-none"
+                    rows={2}
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Analysis Type</label>
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-gray-700">Type</label>
                   <Select value={selectedType} onValueChange={(value: any) => setSelectedType(value)}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select analysis type" />
+                    <SelectTrigger className="w-full h-9">
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {analysisTypes.map((type) => (
                         <SelectItem key={type.value} value={type.value}>
                           <div className="flex items-center space-x-2">
-                            <type.icon className="w-4 h-4" />
+                            <type.icon className="w-3 h-3" />
                             <span>{type.label}</span>
                           </div>
                         </SelectItem>
@@ -410,17 +402,17 @@ const AIBusinessDashboard: React.FC = () => {
                 <Button 
                   onClick={handleGenerateInsight}
                   disabled={isLoading || !prompt.trim()}
-                  className="w-full h-11 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:opacity-50"
+                  className="w-full h-9 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-3 h-3 mr-2 animate-spin" />
                       Generating...
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Generate AI Insight
+                      <Sparkles className="w-3 h-3 mr-2" />
+                      Generate Insight
                     </>
                   )}
                 </Button>
@@ -428,14 +420,13 @@ const AIBusinessDashboard: React.FC = () => {
             </Card>
           </TabsContent>
 
-          {/* Insights Tab */}
-          <TabsContent value="insights" className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center">
-                  <Brain className="w-6 h-6 mr-2 text-blue-600" />
-                  AI Insights 
-                  <span className="ml-2 text-base text-blue-600">({filteredInsights.length})</span>
+          {/* Insights Tab - Compact List */}
+          <TabsContent value="insights" className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <h2 className="text-lg font-bold text-gray-800 flex items-center">
+                  <Brain className="w-5 h-5 mr-2 text-blue-600" />
+                  Insights ({filteredInsights.length})
                 </h2>
                 <div className="flex items-center space-x-2">
                   <Button
@@ -443,55 +434,45 @@ const AIBusinessDashboard: React.FC = () => {
                     variant="outline"
                     size="sm"
                     disabled={isLoadingInsights}
-                    className="border-green-200 text-green-600 hover:bg-green-50"
+                    className="h-8"
                   >
                     {isLoadingInsights ? (
-                      <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                      <Loader2 className="w-3 h-3 animate-spin" />
                     ) : (
-                      <RefreshCw className="w-4 h-4 mr-1" />
+                      <RefreshCw className="w-3 h-3" />
                     )}
-                    Refresh
-                  </Button>
-                  <Button
-                    onClick={() => setShowMobileFilters(!showMobileFilters)}
-                    variant="outline"
-                    size="sm"
-                    className="sm:hidden"
-                  >
-                    <Menu className="w-4 h-4 mr-1" />
-                    Filters
                   </Button>
                   <Button
                     onClick={handleExportAll}
                     variant="outline"
                     size="sm"
-                    className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                    className="h-8"
                   >
-                    <Download className="w-4 h-4 mr-1" />
+                    <Download className="w-3 h-3 mr-1" />
                     Export
                   </Button>
                 </div>
               </div>
 
-              {/* Filters */}
-              <Card className={`bg-gray-50 border-gray-200 ${showMobileFilters ? 'block' : 'hidden sm:block'}`}>
-                <CardContent className="p-4">
-                  <div className="flex flex-col sm:flex-row gap-3">
+              {/* Compact Filters */}
+              <Card className="bg-gray-50 border-gray-200">
+                <CardContent className="p-3">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <div className="flex-1">
                       <div className="relative">
-                        <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+                        <Search className="w-3 h-3 absolute left-2 top-2.5 text-gray-400" />
                         <Input
                           placeholder="Search insights..."
                           value={searchFilter}
                           onChange={(e) => setSearchFilter(e.target.value)}
-                          className="pl-10 border-gray-300 focus:border-blue-500 h-10"
+                          className="pl-8 h-8 text-sm"
                         />
                       </div>
                     </div>
                     <select
                       value={typeFilter}
                       onChange={(e) => setTypeFilter(e.target.value)}
-                      className="px-3 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none text-sm h-10"
+                      className="px-2 py-1 border border-gray-300 rounded-md text-xs h-8"
                     >
                       <option value="all">All Types</option>
                       {analysisTypes.map(type => (
@@ -504,14 +485,14 @@ const AIBusinessDashboard: React.FC = () => {
 
               {isLoadingInsights ? (
                 <Card className="border-2 border-dashed border-gray-300 bg-gray-50">
-                  <CardContent className="p-8 text-center">
-                    <Loader2 className="w-12 h-12 text-gray-400 mx-auto mb-3 animate-spin" />
-                    <h3 className="text-lg font-semibold text-gray-600 mb-2">Loading your insights...</h3>
-                    <p className="text-gray-500 text-sm">Please wait while we fetch your saved insights.</p>
+                  <CardContent className="p-6 text-center">
+                    <Loader2 className="w-8 h-8 text-gray-400 mx-auto mb-2 animate-spin" />
+                    <h3 className="text-sm font-semibold text-gray-600 mb-1">Loading insights...</h3>
+                    <p className="text-gray-500 text-xs">Please wait while we fetch your saved insights.</p>
                   </CardContent>
                 </Card>
               ) : filteredInsights.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {filteredInsights.map((insight) => (
                     <BusinessInsightCard
                       key={insight.id}
@@ -525,13 +506,13 @@ const AIBusinessDashboard: React.FC = () => {
                 </div>
               ) : (
                 <Card className="border-2 border-dashed border-gray-300 bg-gray-50">
-                  <CardContent className="p-8 text-center">
-                    <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <h3 className="text-lg font-semibold text-gray-600 mb-2">No insights found</h3>
-                    <p className="text-gray-500 text-sm">
+                  <CardContent className="p-6 text-center">
+                    <AlertCircle className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                    <h3 className="text-sm font-semibold text-gray-600 mb-1">No insights found</h3>
+                    <p className="text-gray-500 text-xs">
                       {searchFilter || typeFilter !== 'all' 
                         ? 'Try adjusting your search filters or generate new insights.'
-                        : 'Generate your first AI insight to get started with intelligent business analysis.'
+                        : 'Generate your first AI insight to get started.'
                       }
                     </p>
                   </CardContent>
@@ -540,31 +521,31 @@ const AIBusinessDashboard: React.FC = () => {
             </div>
           </TabsContent>
 
-          {/* Analytics Tab */}
-          <TabsContent value="analytics" className="space-y-6">
+          {/* Analytics Tab - Simplified */}
+          <TabsContent value="analytics" className="space-y-4">
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5 text-blue-600" />
-                  Business Analytics Overview
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <BarChart3 className="w-4 h-4 text-blue-600" />
+                  Analytics Overview
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                    <TrendingUp className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-                    <h3 className="font-semibold text-gray-800 mb-2">Performance Trends</h3>
-                    <p className="text-sm text-gray-600">Track your business metrics over time</p>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+                    <TrendingUp className="w-6 h-6 text-blue-600 mx-auto mb-2" />
+                    <h3 className="font-semibold text-gray-800 mb-1 text-sm">Performance</h3>
+                    <p className="text-xs text-gray-600">Track business metrics</p>
                   </div>
-                  <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
-                    <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-3" />
-                    <h3 className="font-semibold text-gray-800 mb-2">Success Metrics</h3>
-                    <p className="text-sm text-gray-600">Monitor key performance indicators</p>
+                  <div className="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-100">
+                    <Target className="w-6 h-6 text-green-600 mx-auto mb-2" />
+                    <h3 className="font-semibold text-gray-800 mb-1 text-sm">Success Metrics</h3>
+                    <p className="text-xs text-gray-600">Monitor KPIs</p>
                   </div>
-                  <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
-                    <Database className="w-8 h-8 text-purple-600 mx-auto mb-3" />
-                    <h3 className="font-semibold text-gray-800 mb-2">Data Insights</h3>
-                    <p className="text-sm text-gray-600">Leverage data for better decisions</p>
+                  <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border border-purple-100">
+                    <Brain className="w-6 h-6 text-purple-600 mx-auto mb-2" />
+                    <h3 className="font-semibold text-gray-800 mb-1 text-sm">AI Insights</h3>
+                    <p className="text-xs text-gray-600">Data-driven decisions</p>
                   </div>
                 </div>
               </CardContent>
