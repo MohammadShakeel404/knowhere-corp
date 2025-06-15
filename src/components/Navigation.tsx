@@ -1,12 +1,16 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from "@/components/ui/button"
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
+
+  // Check if user is admin
+  const isAdmin = user?.email === 'admin@knowherecorp.com' || user?.user_metadata?.role === 'admin';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10">
@@ -45,6 +49,12 @@ const Navigation = () => {
 
             {user ? (
               <div className="flex items-center space-x-4">
+                {isAdmin && (
+                  <Link to="/admin" className="text-gray-300 hover:text-white transition-colors flex items-center space-x-1">
+                    <Shield className="w-4 h-4" />
+                    <span>Admin</span>
+                  </Link>
+                )}
                 <Link to="/profile" className="text-gray-300 hover:text-white transition-colors">
                   Profile
                 </Link>
@@ -131,6 +141,16 @@ const Navigation = () => {
 
               {user ? (
                 <div className="pt-4 border-t border-gray-700">
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium flex items-center space-x-2"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Shield className="w-4 h-4" />
+                      <span>Admin Panel</span>
+                    </Link>
+                  )}
                   <Link
                     to="/profile"
                     className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium"
