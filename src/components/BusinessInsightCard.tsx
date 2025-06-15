@@ -11,7 +11,8 @@ import {
   Bookmark,
   TrendingUp,
   AlertTriangle,
-  Clock
+  Clock,
+  Trash2
 } from 'lucide-react';
 
 interface AIInsight {
@@ -31,13 +32,15 @@ interface BusinessInsightCardProps {
   typeConfig: any;
   onExport: (insight: AIInsight) => void;
   onSave: (insight: AIInsight) => void;
+  onDelete?: (insight: AIInsight) => void;
 }
 
 const BusinessInsightCard: React.FC<BusinessInsightCardProps> = ({
   insight,
   typeConfig,
   onExport,
-  onSave
+  onSave,
+  onDelete
 }) => {
   const Icon = typeConfig.icon;
   
@@ -148,7 +151,7 @@ const BusinessInsightCard: React.FC<BusinessInsightCardProps> = ({
               className="border-purple-200 text-purple-600 hover:bg-purple-50 flex-1 sm:flex-initial"
             >
               <Bookmark className="w-3 h-3 mr-1" />
-              Save
+              Saved
             </Button>
             <Button
               variant="outline"
@@ -160,14 +163,27 @@ const BusinessInsightCard: React.FC<BusinessInsightCardProps> = ({
               Export
             </Button>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-gray-200 text-gray-600 hover:bg-gray-50"
-          >
-            <Share2 className="w-3 h-3 mr-1" />
-            Share
-          </Button>
+          <div className="flex space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-gray-200 text-gray-600 hover:bg-gray-50"
+            >
+              <Share2 className="w-3 h-3 mr-1" />
+              Share
+            </Button>
+            {onDelete && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onDelete(insight)}
+                className="border-red-200 text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="w-3 h-3 mr-1" />
+                Delete
+              </Button>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,9 +25,11 @@ import {
   MessageSquare,
   Target,
   Menu,
-  Sparkles
+  Sparkles,
+  RefreshCw,
+  Trash2
 } from 'lucide-react';
-import { AIService } from '@/services/AIService';
+import { SupabaseAIService } from '@/services/SupabaseAIService';
 import { BusinessAnalyticsService } from '@/services/BusinessAnalyticsService';
 import BusinessInsightCard from './BusinessInsightCard';
 import BusinessDashboardStats from './BusinessDashboardStats';
@@ -48,17 +51,15 @@ interface AIInsight {
 
 const AIBusinessDashboard: React.FC = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [insights, setInsights] = useState<AIInsight[]>([]);
   const [prompt, setPrompt] = useState('');
   const [context, setContext] = useState('');
   const [selectedType, setSelectedType] = useState<'analysis' | 'recommendation' | 'automation' | 'general'>('general');
   const [isLoading, setIsLoading] = useState(false);
-  const [apiKey, setApiKey] = useState('');
-  const [isKeyValid, setIsKeyValid] = useState(true);
-  const [isTestingKey, setIsTestingKey] = useState(false);
+  const [isLoadingInsights, setIsLoadingInsights] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
-  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const analysisTypes = [
@@ -68,55 +69,53 @@ const AIBusinessDashboard: React.FC = () => {
     { value: 'general', label: 'General Business', icon: MessageSquare, color: 'from-orange-500 to-red-500', description: 'General business guidance and advice' }
   ];
 
-  // Check for existing API key on component mount
+  // Load user insights on component mount
   useEffect(() => {
-    const existingKey = AIService.getApiKey();
-    if (existingKey) {
-      setApiKey(existingKey);
-      setIsKeyValid(true);
+    if (user) {
+      loadUserInsights();
     }
-  }, []);
+  }, [user]);
 
-  const handleApiKeySubmit = async () => {
-    if (!apiKey.trim()) {
-      toast({
-        title: "Missing API Key",
-        description: "Please enter your OpenAI API key",
-        variant: "destructive",
-      });
-      return;
-    }
+  const loadUserInsights = async () => {
+    if (!user) return;
     
-    setIsTestingKey(true);
+    setIsLoadingInsights(true);
     try {
-      const isValid = await AIService.testApiKey(apiKey);
-      if (isValid) {
-        AIService.saveApiKey(apiKey);
-        setIsKeyValid(true);
-        setShowApiKeyInput(false);
-        toast({
-          title: "Success",
-          description: "OpenAI API key validated and saved successfully",
-        });
-      } else {
-        toast({
-          title: "Invalid API Key",
-          description: "Please check your OpenAI API key and try again",
-          variant: "destructive",
-        });
-      }
+      const savedInsights = await SupabaseAIService.getUserInsights();
+      const transformedInsights: AIInsight[] = savedInsights.map(insight => ({
+        id: insight.id,
+        type: insight.type,
+        content: insight.content,
+        confidence: insight.confidence,
+        suggestions: insight.suggestions,
+        timestamp: new Date(insight.created_at),
+        priority: insight.priority,
+        category: insight.category,
+        actionItems: insight.action_items
+      }));
+      setInsights(transformedInsights);
     } catch (error) {
+      console.error('Error loading insights:', error);
       toast({
         title: "Error",
-        description: "Failed to validate API key. Please check your internet connection and try again.",
+        description: "Failed to load your saved insights",
         variant: "destructive",
       });
     } finally {
-      setIsTestingKey(false);
+      setIsLoadingInsights(false);
     }
   };
 
   const handleGenerateInsight = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to generate insights",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!prompt.trim()) {
       toast({
         title: "Missing Input",
@@ -128,23 +127,21 @@ const AIBusinessDashboard: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const response = await AIService.generateBusinessInsight({
+      const response = await SupabaseAIService.generateBusinessInsight({
         prompt: prompt.trim(),
         context: context.trim() || undefined,
         type: selectedType
       });
 
-      const { category, priority } = BusinessAnalyticsService.categorizeInsight(response.content, selectedType);
-      
       const newInsight: AIInsight = {
-        id: BusinessAnalyticsService.generateInsightId(),
+        id: response.id || BusinessAnalyticsService.generateInsightId(),
         type: selectedType,
         content: response.content,
         confidence: response.confidence,
         suggestions: response.suggestions,
         timestamp: new Date(),
-        category,
-        priority,
+        category: response.category,
+        priority: response.priority,
         actionItems: response.actionItems
       };
 
@@ -154,7 +151,7 @@ const AIBusinessDashboard: React.FC = () => {
       
       toast({
         title: "AI Insight Generated",
-        description: `Your ${selectedType} insight has been generated successfully`,
+        description: `Your ${selectedType} insight has been generated and saved successfully`,
       });
     } catch (error) {
       console.error('Error generating insight:', error);
@@ -165,6 +162,23 @@ const AIBusinessDashboard: React.FC = () => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDeleteInsight = async (insight: AIInsight) => {
+    try {
+      await SupabaseAIService.deleteInsight(insight.id);
+      setInsights(prev => prev.filter(i => i.id !== insight.id));
+      toast({
+        title: "Insight Deleted",
+        description: "Insight has been deleted successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete insight. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -205,8 +219,8 @@ const AIBusinessDashboard: React.FC = () => {
 
   const handleSaveInsight = (insight: AIInsight) => {
     toast({
-      title: "Insight Saved",
-      description: "Insight has been saved to your workspace",
+      title: "Insight Already Saved",
+      description: "This insight is automatically saved to your workspace",
     });
   };
 
@@ -243,17 +257,6 @@ const AIBusinessDashboard: React.FC = () => {
     }
   };
 
-  const handleResetApiKey = () => {
-    AIService.clearApiKey();
-    setApiKey('');
-    setIsKeyValid(false);
-    setShowApiKeyInput(true);
-    toast({
-      title: "API Key Reset",
-      description: "API key has been cleared. Please enter a new one.",
-    });
-  };
-
   const getTypeConfig = (type: string) => {
     return analysisTypes.find(t => t.value === type) || analysisTypes[3];
   };
@@ -269,8 +272,8 @@ const AIBusinessDashboard: React.FC = () => {
 
   const analytics = BusinessAnalyticsService.generateAnalytics(insights);
 
-  // API Key Setup Screen
-  if (!isKeyValid || showApiKeyInput) {
+  // Show login message if not authenticated
+  if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
         <div className="container mx-auto max-w-lg">
@@ -282,43 +285,12 @@ const AIBusinessDashboard: React.FC = () => {
               <CardTitle className="text-2xl font-bold text-gray-800 mb-2">
                 AI Business Manager
               </CardTitle>
-              <p className="text-gray-600">Configure your OpenAI API key to get started</p>
+              <p className="text-gray-600">Please sign in to access your AI business insights</p>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">OpenAI API Key</label>
-                <Input
-                  type="password"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="sk-..."
-                  className="h-11"
-                  onKeyPress={(e) => e.key === 'Enter' && handleApiKeySubmit()}
-                />
-              </div>
-              <Button 
-                onClick={handleApiKeySubmit}
-                disabled={isTestingKey || !apiKey.trim()}
-                className="w-full h-11 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-              >
-                {isTestingKey ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Validating...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Initialize AI Manager
-                  </>
-                )}
-              </Button>
-              <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                <p className="text-xs text-blue-700">
-                  🔒 Your API key is stored locally and never shared.{' '}
-                  <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="underline font-medium">
-                    Get your key here
-                  </a>
+              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                <p className="text-sm text-blue-700 text-center">
+                  🔐 Sign in to generate insights, save them securely, and access your personalized business dashboard.
                 </p>
               </div>
             </CardContent>
@@ -353,7 +325,7 @@ const AIBusinessDashboard: React.FC = () => {
 
         {/* Main Content */}
         <Tabs defaultValue="generate" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 h-auto p-1 bg-white/50 backdrop-blur-sm border border-gray-200/50">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-3 h-auto p-1 bg-white/50 backdrop-blur-sm border border-gray-200/50">
             <TabsTrigger 
               value="generate" 
               className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white data-[state=active]:shadow-sm"
@@ -379,13 +351,6 @@ const AIBusinessDashboard: React.FC = () => {
             >
               <BarChart3 className="w-4 h-4" />
               <span className="hidden sm:inline">Analytics</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="settings" 
-              className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-white data-[state=active]:shadow-sm"
-            >
-              <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">Settings</span>
             </TabsTrigger>
           </TabsList>
 
@@ -424,6 +389,24 @@ const AIBusinessDashboard: React.FC = () => {
                     rows={3}
                   />
                 </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Analysis Type</label>
+                  <Select value={selectedType} onValueChange={(value: any) => setSelectedType(value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select analysis type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {analysisTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          <div className="flex items-center space-x-2">
+                            <type.icon className="w-4 h-4" />
+                            <span>{type.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <Button 
                   onClick={handleGenerateInsight}
                   disabled={isLoading || !prompt.trim()}
@@ -455,6 +438,20 @@ const AIBusinessDashboard: React.FC = () => {
                   <span className="ml-2 text-base text-blue-600">({filteredInsights.length})</span>
                 </h2>
                 <div className="flex items-center space-x-2">
+                  <Button
+                    onClick={loadUserInsights}
+                    variant="outline"
+                    size="sm"
+                    disabled={isLoadingInsights}
+                    className="border-green-200 text-green-600 hover:bg-green-50"
+                  >
+                    {isLoadingInsights ? (
+                      <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                    ) : (
+                      <RefreshCw className="w-4 h-4 mr-1" />
+                    )}
+                    Refresh
+                  </Button>
                   <Button
                     onClick={() => setShowMobileFilters(!showMobileFilters)}
                     variant="outline"
@@ -505,7 +502,15 @@ const AIBusinessDashboard: React.FC = () => {
                 </CardContent>
               </Card>
 
-              {filteredInsights.length > 0 ? (
+              {isLoadingInsights ? (
+                <Card className="border-2 border-dashed border-gray-300 bg-gray-50">
+                  <CardContent className="p-8 text-center">
+                    <Loader2 className="w-12 h-12 text-gray-400 mx-auto mb-3 animate-spin" />
+                    <h3 className="text-lg font-semibold text-gray-600 mb-2">Loading your insights...</h3>
+                    <p className="text-gray-500 text-sm">Please wait while we fetch your saved insights.</p>
+                  </CardContent>
+                </Card>
+              ) : filteredInsights.length > 0 ? (
                 <div className="space-y-4">
                   {filteredInsights.map((insight) => (
                     <BusinessInsightCard
@@ -514,6 +519,7 @@ const AIBusinessDashboard: React.FC = () => {
                       typeConfig={getTypeConfig(insight.type)}
                       onExport={handleExportInsight}
                       onSave={handleSaveInsight}
+                      onDelete={handleDeleteInsight}
                     />
                   ))}
                 </div>
@@ -521,8 +527,13 @@ const AIBusinessDashboard: React.FC = () => {
                 <Card className="border-2 border-dashed border-gray-300 bg-gray-50">
                   <CardContent className="p-8 text-center">
                     <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <h3 className="text-lg font-semibold text-gray-600 mb-2">No matching insights found</h3>
-                    <p className="text-gray-500 text-sm">Try adjusting your search filters or generate new insights.</p>
+                    <h3 className="text-lg font-semibold text-gray-600 mb-2">No insights found</h3>
+                    <p className="text-gray-500 text-sm">
+                      {searchFilter || typeFilter !== 'all' 
+                        ? 'Try adjusting your search filters or generate new insights.'
+                        : 'Generate your first AI insight to get started with intelligent business analysis.'
+                      }
+                    </p>
                   </CardContent>
                 </Card>
               )}
@@ -555,56 +566,6 @@ const AIBusinessDashboard: React.FC = () => {
                     <h3 className="font-semibold text-gray-800 mb-2">Data Insights</h3>
                     <p className="text-sm text-gray-600">Leverage data for better decisions</p>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Settings Tab */}
-          <TabsContent value="settings" className="space-y-6">
-            <Card className="shadow-lg border-0 bg-white">
-              <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-t-lg pb-4">
-                <CardTitle className="flex items-center text-lg">
-                  <Settings className="w-5 h-5 mr-2" />
-                  Settings
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 md:p-6 space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">OpenAI API Key</label>
-                  <Input
-                    type="password"
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    placeholder="sk-..."
-                    className="h-11"
-                    onKeyPress={(e) => e.key === 'Enter' && handleApiKeySubmit()}
-                  />
-                </div>
-                <Button 
-                  onClick={handleApiKeySubmit}
-                  disabled={isTestingKey || !apiKey.trim()}
-                  className="w-full h-11 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                >
-                  {isTestingKey ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Validating...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Update API Key
-                    </>
-                  )}
-                </Button>
-                <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                  <p className="text-xs text-blue-700">
-                    🔒 Your API key is stored locally and never shared.{' '}
-                    <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="underline font-medium">
-                      Get your key here
-                    </a>
-                  </p>
                 </div>
               </CardContent>
             </Card>
