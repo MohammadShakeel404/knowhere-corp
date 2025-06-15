@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from "@/hooks/use-toast";
 import {
   Sheet,
   SheetContent,
@@ -15,10 +17,34 @@ import { Menu } from "lucide-react";
 const Navigation: React.FC = () => {
   const { user, signOut } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+  const handleSignOut = async () => {
+    try {
+      const { error } = await signOut();
+      if (error) {
+        toast({
+          title: "Sign Out Failed",
+          description: error.message || "Failed to sign out",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Signed Out",
+          description: "You have been successfully signed out."
+        });
+        navigate('/');
+      }
+    } catch (err) {
+      console.error('Sign out error:', err);
+      toast({
+        title: "Sign Out Failed",
+        description: "An unexpected error occurred",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -90,7 +116,11 @@ const Navigation: React.FC = () => {
                     Profile
                   </Button>
                 </Link>
-                <Button onClick={signOut} variant="outline" className="border-gray-400 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                <Button 
+                  onClick={handleSignOut} 
+                  variant="outline" 
+                  className="border-gray-400 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                >
                   Sign Out
                 </Button>
               </>
@@ -149,7 +179,11 @@ const Navigation: React.FC = () => {
                       <Link to="/profile" className="hover:text-blue-300 transition-colors block py-2">
                         Profile
                       </Link>
-                      <Button onClick={signOut} variant="outline" className="border-gray-400 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors w-full">
+                      <Button 
+                        onClick={handleSignOut} 
+                        variant="outline" 
+                        className="border-gray-400 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors w-full"
+                      >
                         Sign Out
                       </Button>
                     </>

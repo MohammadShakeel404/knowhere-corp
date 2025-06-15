@@ -158,24 +158,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    setProfile(null);
-    return { error };
+    try {
+      const { error } = await supabase.auth.signOut();
+      
+      // Clear all state immediately
+      setUser(null);
+      setSession(null);
+      setProfile(null);
+      
+      return { error };
+    } catch (error) {
+      console.error('Sign out error:', error);
+      return { error };
+    }
   };
 
   const updateProfile = async (updates: Partial<Profile>) => {
     if (!user) return { error: { message: 'User not authenticated' } };
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq('id', user.id);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('id', user.id);
 
-    if (!error) {
-      await fetchProfile(user.id);
+      if (!error) {
+        await fetchProfile(user.id);
+      }
+
+      return { error };
+    } catch (error) {
+      console.error('Update profile error:', error);
+      return { error };
     }
-
-    return { error };
   };
 
   const refreshProfile = async () => {
