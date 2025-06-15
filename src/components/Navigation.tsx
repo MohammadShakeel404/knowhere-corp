@@ -1,14 +1,35 @@
-
-import { Brain, Menu, X } from "lucide-react";
+import { Brain, Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 export const Navigation = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Signed Out",
+        description: "You have been successfully signed out."
+      });
+      navigate('/');
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
@@ -48,16 +69,33 @@ export const Navigation = () => {
                 Contact
               </Button>
             </Link>
-            <Link to="/login">
-              <Button variant="ghost" className="text-white/80 hover:text-white font-light">
-                Login
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button className="bg-white text-black hover:bg-white/90 font-medium rounded-full px-6">
-                Get Started
-              </Button>
-            </Link>
+            
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <span className="text-white/60 text-sm">Welcome, {user.email}</span>
+                <Button 
+                  onClick={handleSignOut}
+                  variant="ghost" 
+                  size="icon"
+                  className="text-white/80 hover:text-white"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Link to="/login">
+                  <Button variant="ghost" className="text-white/80 hover:text-white font-light">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="bg-white text-black hover:bg-white/90 font-medium rounded-full px-6">
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -110,6 +148,32 @@ export const Navigation = () => {
                   Get Started
                 </Button>
               </Link>
+              
+              {user ? (
+                <div className="space-y-4 pt-4 border-t border-white/10">
+                  <div className="text-white/60 text-sm">Welcome, {user.email}</div>
+                  <Button 
+                    onClick={handleSignOut}
+                    variant="ghost" 
+                    className="w-full text-white/80 hover:text-white font-light justify-start"
+                  >
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4 pt-4 border-t border-white/10">
+                  <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full text-white/80 hover:text-white font-light justify-start">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
+                    <Button className="w-full bg-white text-black hover:bg-white/90 font-medium">
+                      Get Started
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         )}

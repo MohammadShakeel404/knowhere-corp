@@ -2,16 +2,16 @@
 import { Navigation } from "@/components/Navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Brain, Mail, Lock, Eye, EyeOff, User, Building } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,10 +24,21 @@ const Signup = () => {
     businessType: "",
     agreeToTerms: false
   });
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { signUp, user } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!formData.agreeToTerms) {
       toast({
         title: "Terms Required",
@@ -36,11 +47,39 @@ const Signup = () => {
       });
       return;
     }
-    console.log("Signup attempted:", formData);
-    toast({
-      title: "Account Created!",
-      description: "Welcome to MarketingAI. Your free trial has started."
-    });
+
+    setIsLoading(true);
+
+    try {
+      const { error } = await signUp(formData.email, formData.password, {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        company: formData.company,
+        business_type: formData.businessType
+      });
+
+      if (error) {
+        toast({
+          title: "Signup Failed",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Account Created!",
+          description: "Please check your email to verify your account."
+        });
+        // Don't redirect immediately, let them verify email first
+      }
+    } catch (err) {
+      toast({
+        title: "Signup Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -51,7 +90,6 @@ const Signup = () => {
     <div className="min-h-screen bg-black overflow-hidden">
       <Navigation />
       
-      {/* Hero Section - Apple-style minimal */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative">
         <div className="absolute inset-0 bg-gradient-to-br from-neutral-900/20 via-transparent to-neutral-900/20"></div>
         <div className="max-w-md mx-auto relative z-10">
@@ -179,17 +217,18 @@ const Signup = () => {
                   />
                   <Label htmlFor="terms" className="text-sm text-white/60 font-light">
                     I agree to the{" "}
-                    <a href="#" className="text-white hover:text-white/80 transition-colors duration-300">Terms of Service</a>{" "}
+                    <Link to="/terms" className="text-white hover:text-white/80 transition-colors duration-300">Terms of Service</Link>{" "}
                     and{" "}
-                    <a href="#" className="text-white hover:text-white/80 transition-colors duration-300">Privacy Policy</a>
+                    <Link to="/privacy" className="text-white hover:text-white/80 transition-colors duration-300">Privacy Policy</Link>
                   </Label>
                 </div>
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-white text-black hover:bg-white/90 h-14 rounded-2xl text-lg font-medium transition-all duration-300 hover:scale-[1.02]"
+                  disabled={isLoading}
+                  className="w-full bg-white text-black hover:bg-white/90 h-14 rounded-2xl text-lg font-medium transition-all duration-300 hover:scale-[1.02] disabled:opacity-50"
                 >
-                  Start Free Trial
+                  {isLoading ? "Creating Account..." : "Start Free Trial"}
                 </Button>
               </form>
               
