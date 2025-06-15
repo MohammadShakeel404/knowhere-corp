@@ -16,6 +16,7 @@ interface AIResponse {
 export class AIService {
   private static API_KEY_STORAGE_KEY = 'openai_api_key';
   private static BASE_URL = 'https://api.openai.com/v1/chat/completions';
+  private static DEFAULT_API_KEY = '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';
 
   static saveApiKey(apiKey: string): void {
     if (!apiKey || !apiKey.trim()) {
@@ -26,7 +27,8 @@ export class AIService {
   }
 
   static getApiKey(): string | null {
-    return localStorage.getItem(this.API_KEY_STORAGE_KEY);
+    const stored = localStorage.getItem(this.API_KEY_STORAGE_KEY);
+    return stored || this.DEFAULT_API_KEY;
   }
 
   static clearApiKey(): void {

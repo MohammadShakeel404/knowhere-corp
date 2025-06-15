@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -45,7 +44,7 @@ const AIBusinessDashboard = () => {
   const [selectedType, setSelectedType] = useState<'analysis' | 'recommendation' | 'automation' | 'general'>('general');
   const [isLoading, setIsLoading] = useState(false);
   const [apiKey, setApiKey] = useState('');
-  const [isKeyValid, setIsKeyValid] = useState(false);
+  const [isKeyValid, setIsKeyValid] = useState(true); // Set to true since we have a default key
   const [isTestingKey, setIsTestingKey] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -64,8 +63,6 @@ const AIBusinessDashboard = () => {
     if (existingKey) {
       setApiKey(existingKey);
       setIsKeyValid(true);
-    } else {
-      setShowApiKeyInput(true);
     }
   }, []);
 
