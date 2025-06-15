@@ -12,7 +12,8 @@ import {
   Loader2,
   AlertCircle,
   RefreshCw,
-  Plus
+  Plus,
+  Sparkles
 } from 'lucide-react';
 import { SupabaseAIService } from '@/services/SupabaseAIService';
 import { BusinessAnalyticsService } from '@/services/BusinessAnalyticsService';
@@ -248,18 +249,22 @@ const AIBusinessDashboard: React.FC = () => {
   // Show login message if not authenticated
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-3 sm:p-6">
-        <div className="container mx-auto max-w-md">
-          <Card className="shadow-xl border-0 bg-white">
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-                <Brain className="w-6 h-6 text-white" />
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-lg">
+            <CardContent className="p-8 text-center">
+              <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <Brain className="w-8 h-8 text-white" />
               </div>
-              <h2 className="text-xl font-bold text-gray-800 mb-2">AI Business Manager</h2>
-              <p className="text-gray-600 text-sm mb-4">Please sign in to access your AI business insights</p>
-              <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                <p className="text-xs text-blue-700 text-center">
-                  🔐 Sign in to generate insights, save them securely, and access your personalized business dashboard.
+              <h2 className="text-2xl font-bold text-gray-800 mb-3">AI Business Manager</h2>
+              <p className="text-gray-600 mb-6">Unlock intelligent insights for your business with AI-powered analysis</p>
+              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 border border-indigo-200">
+                <div className="flex items-center justify-center mb-2">
+                  <Sparkles className="w-5 h-5 text-indigo-600 mr-2" />
+                  <span className="text-sm font-semibold text-indigo-800">Sign in to get started</span>
+                </div>
+                <p className="text-xs text-indigo-700">
+                  Generate insights, save them securely, and access your personalized business dashboard.
                 </p>
               </div>
             </CardContent>
@@ -270,102 +275,108 @@ const AIBusinessDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <div className="container mx-auto px-3 sm:px-6 py-4 max-w-7xl">
-        {/* Compact Header */}
-        <div className="mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+        {/* Enhanced Header */}
+        <div className="mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-6">
+            <div className="space-y-2">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                 AI Business Manager
               </h1>
-              <p className="text-gray-600 text-sm">
-                Get intelligent insights for your business
+              <p className="text-gray-600 text-base sm:text-lg max-w-2xl">
+                Transform your business with AI-powered insights and strategic recommendations
               </p>
             </div>
-            <SupabaseStatus />
+            <div className="flex-shrink-0">
+              <SupabaseStatus />
+            </div>
           </div>
 
-          {/* Compact Stats */}
+          {/* Enhanced Stats */}
           {analytics.totalInsights > 0 && (
-            <BusinessDashboardStats analytics={analytics} />
+            <div className="mb-6">
+              <BusinessDashboardStats analytics={analytics} />
+            </div>
           )}
         </div>
 
-        {/* Responsive Tabs */}
-        <Tabs defaultValue="generate" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-white/70 backdrop-blur-sm">
+        {/* Enhanced Tabs */}
+        <Tabs defaultValue="generate" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 h-12 p-1 bg-white/70 backdrop-blur-sm border border-gray-200 shadow-sm">
             <TabsTrigger 
               value="generate" 
-              className="flex items-center gap-1 py-2 px-2 text-xs sm:text-sm data-[state=active]:bg-white"
+              className="flex items-center gap-2 py-3 px-4 text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
             >
-              <Plus className="w-3 h-3" />
-              <span>Generate</span>
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">Generate</span>
             </TabsTrigger>
             <TabsTrigger 
               value="insights" 
-              className="flex items-center gap-1 py-2 px-2 text-xs sm:text-sm data-[state=active]:bg-white"
+              className="flex items-center gap-2 py-3 px-4 text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
             >
-              <Lightbulb className="w-3 h-3" />
-              <span>Insights</span>
+              <Lightbulb className="w-4 h-4" />
+              <span className="hidden sm:inline">Insights</span>
               {insights.length > 0 && (
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="secondary" className="text-xs h-5 px-2">
                   {insights.length}
                 </Badge>
               )}
             </TabsTrigger>
             <TabsTrigger 
               value="analytics" 
-              className="flex items-center gap-1 py-2 px-2 text-xs sm:text-sm data-[state=active]:bg-white"
+              className="flex items-center gap-2 py-3 px-4 text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
             >
-              <BarChart3 className="w-3 h-3" />
-              <span>Analytics</span>
+              <BarChart3 className="w-4 h-4" />
+              <span className="hidden sm:inline">Analytics</span>
             </TabsTrigger>
           </TabsList>
 
-          {/* Generate Tab - Compact Form */}
-          <TabsContent value="generate" className="space-y-4">
-            <InsightGenerationForm 
-              onGenerate={handleGenerateInsight}
-              isLoading={isLoading}
-            />
+          {/* Generate Tab */}
+          <TabsContent value="generate" className="space-y-6">
+            <div className="max-w-2xl mx-auto">
+              <InsightGenerationForm 
+                onGenerate={handleGenerateInsight}
+                isLoading={isLoading}
+              />
+            </div>
           </TabsContent>
 
-          {/* Insights Tab - Compact List */}
-          <TabsContent value="insights" className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <h2 className="text-lg font-bold text-gray-800 flex items-center">
-                  <Brain className="w-5 h-5 mr-2 text-blue-600" />
-                  Insights ({filteredInsights.length})
+          {/* Insights Tab */}
+          <TabsContent value="insights" className="space-y-6">
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h2 className="text-xl font-bold text-gray-800 flex items-center">
+                  <Brain className="w-6 h-6 mr-3 text-indigo-600" />
+                  Your Insights ({filteredInsights.length})
                 </h2>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-3">
                   <Button
                     onClick={loadUserInsights}
                     variant="outline"
                     size="sm"
                     disabled={isLoadingInsights}
-                    className="h-8"
+                    className="h-9"
                   >
                     {isLoadingInsights ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
-                      <RefreshCw className="w-3 h-3" />
+                      <RefreshCw className="w-4 h-4" />
                     )}
+                    <span className="ml-2 hidden sm:inline">Refresh</span>
                   </Button>
                   <Button
                     onClick={handleExportAll}
                     variant="outline"
                     size="sm"
-                    className="h-8"
+                    className="h-9"
                   >
-                    <Download className="w-3 h-3 mr-1" />
-                    Export
+                    <Download className="w-4 h-4" />
+                    <span className="ml-2 hidden sm:inline">Export All</span>
                   </Button>
                 </div>
               </div>
 
-              {/* Compact Filters */}
               <InsightFilters
                 searchFilter={searchFilter}
                 typeFilter={typeFilter}
@@ -375,15 +386,15 @@ const AIBusinessDashboard: React.FC = () => {
               />
 
               {isLoadingInsights ? (
-                <Card className="border-2 border-dashed border-gray-300 bg-gray-50">
-                  <CardContent className="p-6 text-center">
-                    <Loader2 className="w-8 h-8 text-gray-400 mx-auto mb-2 animate-spin" />
-                    <h3 className="text-sm font-semibold text-gray-600 mb-1">Loading insights...</h3>
-                    <p className="text-gray-500 text-xs">Please wait while we fetch your saved insights.</p>
+                <Card className="border-2 border-dashed border-gray-300 bg-gray-50/50">
+                  <CardContent className="p-12 text-center">
+                    <Loader2 className="w-12 h-12 text-gray-400 mx-auto mb-4 animate-spin" />
+                    <h3 className="text-lg font-semibold text-gray-600 mb-2">Loading insights...</h3>
+                    <p className="text-gray-500">Please wait while we fetch your saved insights.</p>
                   </CardContent>
                 </Card>
               ) : filteredInsights.length > 0 ? (
-                <div className="space-y-3">
+                <div className="grid gap-4 sm:gap-6">
                   {filteredInsights.map((insight) => (
                     <BusinessInsightCard
                       key={insight.id}
@@ -396,24 +407,33 @@ const AIBusinessDashboard: React.FC = () => {
                   ))}
                 </div>
               ) : (
-                <Card className="border-2 border-dashed border-gray-300 bg-gray-50">
-                  <CardContent className="p-6 text-center">
-                    <AlertCircle className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <h3 className="text-sm font-semibold text-gray-600 mb-1">No insights found</h3>
-                    <p className="text-gray-500 text-xs">
+                <Card className="border-2 border-dashed border-gray-300 bg-gray-50/50">
+                  <CardContent className="p-12 text-center">
+                    <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-600 mb-2">No insights found</h3>
+                    <p className="text-gray-500 mb-4">
                       {searchFilter || typeFilter !== 'all' 
                         ? 'Try adjusting your search filters or generate new insights.'
-                        : 'Generate your first AI insight to get started.'
+                        : 'Generate your first AI insight to get started with intelligent business analysis.'
                       }
                     </p>
+                    {!searchFilter && typeFilter === 'all' && (
+                      <Button
+                        onClick={() => document.querySelector('[value="generate"]')?.click()}
+                        className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Generate First Insight
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               )}
             </div>
           </TabsContent>
 
-          {/* Analytics Tab - Simplified */}
-          <TabsContent value="analytics" className="space-y-4">
+          {/* Analytics Tab */}
+          <TabsContent value="analytics" className="space-y-6">
             <AnalyticsOverview />
           </TabsContent>
         </Tabs>
