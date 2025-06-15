@@ -14,7 +14,7 @@ const Admin = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <AdminDashboard />;
+        return <AdminDashboard onTabChange={setActiveTab} />;
       case 'users':
         return <AdminUsers />;
       case 'services':
@@ -24,18 +24,18 @@ const Admin = () => {
       case 'settings':
         return <AdminSettings />;
       default:
-        return <AdminDashboard />;
+        return <AdminDashboard onTabChange={setActiveTab} />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <Navigation />
       
       <div className="flex pt-16">
         <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} />
         
-        <main className="flex-1 p-6 lg:p-8 ml-64">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 ml-0 md:ml-64 transition-all duration-300">
           <div className="max-w-7xl mx-auto">
             {renderContent()}
           </div>

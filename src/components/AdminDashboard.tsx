@@ -1,79 +1,103 @@
 
 import React from 'react';
-import { Users, Briefcase, TrendingUp, DollarSign } from 'lucide-react';
+import { Users, Briefcase, TrendingUp, DollarSign, ArrowRight, Activity, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-const AdminDashboard = () => {
+interface AdminDashboardProps {
+  onTabChange: (tab: string) => void;
+}
+
+const AdminDashboard = ({ onTabChange }: AdminDashboardProps) => {
   const stats = [
     {
       title: 'Total Users',
       value: '2,847',
       change: '+12.3%',
       icon: Users,
-      color: 'from-blue-500 to-blue-600'
+      color: 'from-blue-500 to-blue-600',
+      trend: 'up'
     },
     {
       title: 'Active Services',
       value: '156',
       change: '+8.7%',
       icon: Briefcase,
-      color: 'from-green-500 to-green-600'
+      color: 'from-green-500 to-green-600',
+      trend: 'up'
     },
     {
       title: 'Monthly Growth',
       value: '23.4%',
       change: '+4.2%',
       icon: TrendingUp,
-      color: 'from-purple-500 to-purple-600'
+      color: 'from-purple-500 to-purple-600',
+      trend: 'up'
     },
     {
       title: 'Revenue',
       value: '$48,921',
       change: '+15.8%',
       icon: DollarSign,
-      color: 'from-orange-500 to-orange-600'
+      color: 'from-orange-500 to-orange-600',
+      trend: 'up'
     }
+  ];
+
+  const quickActions = [
+    { id: 'users', title: 'Manage Users', description: 'Add, edit, or remove user accounts', icon: Users },
+    { id: 'services', title: 'Configure Services', description: 'Set up and monitor AI services', icon: Briefcase },
+    { id: 'analytics', title: 'View Analytics', description: 'Check performance metrics', icon: BarChart3 },
+  ];
+
+  const recentAlerts = [
+    { type: 'warning', message: 'High API usage detected', time: '5 min ago' },
+    { type: 'info', message: 'System maintenance scheduled', time: '1 hour ago' },
+    { type: 'success', message: 'Backup completed successfully', time: '2 hours ago' },
   ];
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 bg-clip-text text-transparent">
-          Admin Dashboard
+      {/* Welcome Header */}
+      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-8 text-white">
+        <h1 className="text-3xl lg:text-4xl font-bold mb-2">
+          Welcome to Admin Dashboard
         </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Comprehensive management and analytics for your platform
+        <p className="text-lg text-blue-100 mb-6">
+          Manage your platform with comprehensive tools and insights
         </p>
+        <div className="flex items-center space-x-2 text-blue-100">
+          <Activity className="w-5 h-5" />
+          <span>System Status: All services operational</span>
+        </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
             <Card 
               key={index} 
-              className="relative overflow-hidden bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+              className="relative overflow-hidden bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
-                  {stat.title}
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-gray-600">
+                    {stat.title}
+                  </CardTitle>
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-3xl font-bold text-gray-900">
-                      {stat.value}
-                    </div>
-                    <div className="text-sm text-green-600 font-medium">
-                      {stat.change}
-                    </div>
-                  </div>
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">
+                  {stat.value}
+                </div>
+                <div className="text-sm text-green-600 font-medium flex items-center">
+                  <TrendingUp className="w-4 h-4 mr-1" />
+                  {stat.change} from last month
                 </div>
               </CardContent>
             </Card>
@@ -81,80 +105,83 @@ const AdminDashboard = () => {
         })}
       </div>
 
-      {/* Main Content Grid */}
+      {/* Quick Actions & Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Recent Activity */}
-        <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl">
+        {/* Quick Actions */}
+        <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
+            <CardTitle className="flex items-center space-x-2">
+              <span>Quick Actions</span>
+              <ArrowRight className="w-5 h-5 text-gray-400" />
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {[
-                { user: 'John Doe', action: 'Created new service', time: '2 minutes ago' },
-                { user: 'Sarah Smith', action: 'Updated profile', time: '15 minutes ago' },
-                { user: 'Mike Johnson', action: 'Completed branding analysis', time: '1 hour ago' },
-                { user: 'Emma Wilson', action: 'Generated business insights', time: '2 hours ago' },
-              ].map((activity, index) => (
-                <div key={index} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                    {activity.user.split(' ').map(n => n[0]).join('')}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">{activity.user}</p>
-                    <p className="text-xs text-gray-500">{activity.action}</p>
-                  </div>
-                  <span className="text-xs text-gray-400">{activity.time}</span>
-                </div>
-              ))}
+            <div className="space-y-3">
+              {quickActions.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <Button
+                    key={action.id}
+                    variant="outline"
+                    className="w-full p-4 h-auto flex items-start space-x-3 hover:bg-gray-50"
+                    onClick={() => onTabChange(action.id)}
+                  >
+                    <Icon className="w-5 h-5 mt-0.5 text-blue-500" />
+                    <div className="text-left flex-1">
+                      <div className="font-medium text-gray-900">{action.title}</div>
+                      <div className="text-sm text-gray-500">{action.description}</div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-gray-400" />
+                  </Button>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
-        <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl">
+        {/* Recent Alerts */}
+        <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Quick Actions</CardTitle>
+            <CardTitle className="flex items-center space-x-2">
+              <AlertCircle className="w-5 h-5" />
+              <span>Recent Alerts</span>
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { title: 'Add User', color: 'from-blue-500 to-blue-600' },
-                { title: 'Create Service', color: 'from-green-500 to-green-600' },
-                { title: 'View Reports', color: 'from-purple-500 to-purple-600' },
-                { title: 'System Settings', color: 'from-orange-500 to-orange-600' },
-              ].map((action, index) => (
-                <button
-                  key={index}
-                  className={`
-                    p-4 rounded-xl bg-gradient-to-br ${action.color} text-white font-medium
-                    hover:shadow-lg transition-all duration-200 hover:scale-105
-                  `}
-                >
-                  {action.title}
-                </button>
+            <div className="space-y-4">
+              {recentAlerts.map((alert, index) => (
+                <div key={index} className="flex items-start space-x-3 p-3 rounded-lg bg-gray-50">
+                  <div className={`w-2 h-2 rounded-full mt-2 ${
+                    alert.type === 'warning' ? 'bg-yellow-500' :
+                    alert.type === 'info' ? 'bg-blue-500' : 'bg-green-500'
+                  }`} />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">{alert.message}</p>
+                    <p className="text-xs text-gray-500">{alert.time}</p>
+                  </div>
+                </div>
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* System Status */}
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl">
+      {/* System Overview */}
+      <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">System Status</CardTitle>
+          <CardTitle>System Overview</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { service: 'API Server', status: 'Operational', uptime: '99.9%' },
-              { service: 'Database', status: 'Operational', uptime: '99.8%' },
-              { service: 'AI Services', status: 'Operational', uptime: '99.7%' },
+              { service: 'API Server', status: 'Operational', uptime: '99.9%', color: 'green' },
+              { service: 'Database', status: 'Operational', uptime: '99.8%', color: 'green' },
+              { service: 'AI Services', status: 'Operational', uptime: '99.7%', color: 'green' },
             ].map((service, index) => (
-              <div key={index} className="text-center">
-                <div className="w-4 h-4 bg-green-500 rounded-full mx-auto mb-2"></div>
-                <h3 className="font-medium text-gray-900">{service.service}</h3>
-                <p className="text-sm text-gray-600">{service.status}</p>
+              <div key={index} className="text-center p-4 bg-gray-50 rounded-lg">
+                <div className={`w-4 h-4 bg-${service.color}-500 rounded-full mx-auto mb-3`}></div>
+                <h3 className="font-semibold text-gray-900 mb-1">{service.service}</h3>
+                <p className="text-sm text-gray-600 mb-1">{service.status}</p>
                 <p className="text-xs text-gray-500">Uptime: {service.uptime}</p>
               </div>
             ))}
