@@ -1,4 +1,3 @@
-
 interface AnalyticsData {
   totalInsights: number;
   insightsByType: Record<string, number>;
@@ -9,8 +8,20 @@ interface AnalyticsData {
   recentActivity: number;
 }
 
+interface AIInsight {
+  id: string;
+  type: string;
+  content: string;
+  confidence?: number;
+  suggestions?: string[];
+  timestamp: Date;
+  priority?: 'low' | 'medium' | 'high';
+  category?: string;
+  actionItems?: string[];
+}
+
 export class BusinessAnalyticsService {
-  static generateAnalytics(insights: any[]): AnalyticsData {
+  static generateAnalytics(insights: AIInsight[]): AnalyticsData {
     if (insights.length === 0) {
       return {
         totalInsights: 0,
@@ -30,7 +41,7 @@ export class BusinessAnalyticsService {
       const type = insight.type || 'general';
       acc[type] = (acc[type] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
     // Calculate average confidence
     const averageConfidence = insights.reduce((sum, insight) => {
@@ -42,10 +53,10 @@ export class BusinessAnalyticsService {
       const category = insight.category || 'Uncategorized';
       acc[category] = (acc[category] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
     const topCategories = Object.entries(categoryCount)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([,a], [,b]) => (b as number) - (a as number))
       .slice(0, 5)
       .map(([category]) => category);
 
@@ -54,7 +65,9 @@ export class BusinessAnalyticsService {
     const now = new Date();
     
     insights.forEach(insight => {
-      const daysDiff = Math.floor((now.getTime() - insight.timestamp.getTime()) / (1000 * 60 * 60 * 24));
+      // Ensure timestamp is a Date object
+      const timestamp = insight.timestamp instanceof Date ? insight.timestamp : new Date(insight.timestamp);
+      const daysDiff = Math.floor((now.getTime() - timestamp.getTime()) / (1000 * 60 * 60 * 24));
       if (daysDiff >= 0 && daysDiff < 7) {
         weeklyTrend[6 - daysDiff]++;
       }
@@ -65,13 +78,14 @@ export class BusinessAnalyticsService {
       const priority = insight.priority || 'medium';
       acc[priority] = (acc[priority] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
     // Recent activity (last 24 hours)
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    const recentActivity = insights.filter(insight => 
-      insight.timestamp > oneDayAgo
-    ).length;
+    const recentActivity = insights.filter(insight => {
+      const timestamp = insight.timestamp instanceof Date ? insight.timestamp : new Date(insight.timestamp);
+      return timestamp > oneDayAgo;
+    }).length;
 
     return {
       totalInsights,
@@ -84,21 +98,24 @@ export class BusinessAnalyticsService {
     };
   }
 
-  static exportInsights(insights: any[]): string {
+  static exportInsights(insights: AIInsight[]): string {
     if (insights.length === 0) {
       return 'No insights to export';
     }
 
-    const data = insights.map(insight => ({
-      timestamp: insight.timestamp.toISOString(),
-      type: insight.type || 'general',
-      category: insight.category || 'Uncategorized',
-      priority: insight.priority || 'medium',
-      confidence: Math.round((insight.confidence || 0) * 100) + '%',
-      content: insight.content.substring(0, 500) + (insight.content.length > 500 ? '...' : ''),
-      suggestions: insight.suggestions?.join('; ') || 'None',
-      actionItems: insight.actionItems?.join('; ') || 'None'
-    }));
+    const data = insights.map(insight => {
+      const timestamp = insight.timestamp instanceof Date ? insight.timestamp : new Date(insight.timestamp);
+      return {
+        timestamp: timestamp.toISOString(),
+        type: insight.type || 'general',
+        category: insight.category || 'Uncategorized',
+        priority: insight.priority || 'medium',
+        confidence: Math.round((insight.confidence || 0) * 100) + '%',
+        content: insight.content.substring(0, 500) + (insight.content.length > 500 ? '...' : ''),
+        suggestions: Array.isArray(insight.suggestions) ? insight.suggestions.join('; ') : 'None',
+        actionItems: Array.isArray(insight.actionItems) ? insight.actionItems.join('; ') : 'None'
+      };
+    });
 
     const headers = ['Timestamp', 'Type', 'Category', 'Priority', 'Confidence', 'Content', 'Suggestions', 'Action Items'];
     const csvContent = [
@@ -125,7 +142,7 @@ export class BusinessAnalyticsService {
     }
 
     // Category determination based on content and type
-    const categoryMappings = {
+    const categoryMappings: Record<string, { keywords: Record<string, string[]>; default: string }> = {
       analysis: {
         keywords: {
           'Financial Performance': ['revenue', 'profit', 'cost', 'budget', 'financial', 'roi', 'margin'],
