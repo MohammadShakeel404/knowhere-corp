@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -37,19 +38,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -99,5 +93,36 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+  
+  /* Ensure proper contrast for text elements */
+  .text-white\/80 {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  .text-white\/60 {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  .text-white\/40 {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  
+  /* Ensure dropdowns have proper background */
+  .bg-black\/95 {
+    background-color: rgba(0, 0, 0, 0.98) !important;
+  }
+  
+  /* Improve input visibility */
+  .bg-white\/5 {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+  }
+  
+  .border-white\/10 {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+  
+  .border-white\/20 {
+    border-color: rgba(255, 255, 255, 0.25) !important;
   }
 }
