@@ -1,25 +1,31 @@
-
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Navigation } from "@/components/Navigation";
-import { Brain } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Brain, ArrowLeft, Shield, FileText, Users, Globe } from "lucide-react";
 
 const Terms = () => {
   return (
     <div className="min-h-screen bg-black overflow-hidden">
       <Navigation />
-      
-      {/* Hero Section - Apple-style minimal */}
+
+      {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative">
         <div className="absolute inset-0 bg-gradient-to-br from-neutral-900/20 via-transparent to-neutral-900/20"></div>
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h1 className="text-6xl md:text-8xl font-extralight text-white mb-8 tracking-tight leading-none">
+        <div className="max-w-4xl mx-auto relative z-10">
+          <Link to="/" className="inline-flex items-center text-white/60 hover:text-white mb-8 transition-colors group">
+            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform duration-300" />
+            Back to Home
+          </Link>
+          
+          <h1 className="text-5xl md:text-7xl font-extralight text-white mb-6 tracking-tight leading-none">
             Terms of
             <span className="block bg-gradient-to-r from-white to-white/40 bg-clip-text text-transparent">
               Service
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-white/50 max-w-2xl mx-auto font-light leading-relaxed">
+          <p className="text-xl text-white/50 max-w-2xl font-light leading-relaxed">
             Last updated: December 15, 2024
           </p>
         </div>
@@ -27,7 +33,7 @@ const Terms = () => {
 
       {/* Terms Content */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto space-y-12">
           <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-12 backdrop-blur-xl">
             <div className="prose prose-lg prose-invert max-w-none">
               <div className="space-y-12">
@@ -143,15 +149,14 @@ const Terms = () => {
               <span className="text-xl font-light text-white">MarketingAI</span>
             </div>
             <div className="flex space-x-8 text-white/60">
-              <Link to="/features" className="hover:text-white transition-colors font-light">Features</Link>
-              <Link to="/pricing" className="hover:text-white transition-colors font-light">Pricing</Link>
               <Link to="/about" className="hover:text-white transition-colors font-light">About</Link>
               <Link to="/contact" className="hover:text-white transition-colors font-light">Contact</Link>
               <Link to="/privacy" className="hover:text-white transition-colors font-light">Privacy</Link>
+              <Link to="/terms" className="hover:text-white transition-colors font-light">Terms</Link>
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-white/10 text-center text-white/40">
-            <p className="font-light">&copy; 2024 MarketingAI. All rights reserved. Transforming businesses with AI-powered marketing.</p>
+            <p className="font-light">&copy; 2024 MarketingAI. All rights reserved.</p>
           </div>
         </div>
       </footer>

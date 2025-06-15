@@ -28,6 +28,11 @@ export const Navigation = () => {
                 Features
               </Button>
             </Link>
+            <Link to="/ai">
+              <Button variant="ghost" className={`text-white/80 hover:text-white font-light ${isActive('/ai') ? 'text-white bg-white/10' : ''}`}>
+                AI
+              </Button>
+            </Link>
             <Link to="/pricing">
               <Button variant="ghost" className={`text-white/80 hover:text-white font-light ${isActive('/pricing') ? 'text-white bg-white/10' : ''}`}>
                 Pricing
@@ -73,6 +78,11 @@ export const Navigation = () => {
               <Link to="/features" onClick={() => setIsMenuOpen(false)}>
                 <Button variant="ghost" className="w-full text-white/80 hover:text-white font-light justify-start">
                   Features
+                </Button>
+              </Link>
+              <Link to="/ai" onClick={() => setIsMenuOpen(false)}>
+                <Button variant="ghost" className="w-full text-white/80 hover:text-white font-light justify-start">
+                  AI
                 </Button>
               </Link>
               <Link to="/pricing" onClick={() => setIsMenuOpen(false)}>
