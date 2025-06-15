@@ -118,7 +118,7 @@ const Features = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <Brain className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-light text-white">MarketingAI</span>
+              <span className="text-xl font-light text-white">Knowhere Corp</span>
             </div>
             <div className="flex space-x-8 text-white/60">
               <Link to="/about" className="hover:text-white transition-colors font-light">About</Link>
@@ -128,7 +128,7 @@ const Features = () => {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-white/10 text-center text-white/40">
-            <p className="font-light">&copy; 2024 MarketingAI. All rights reserved.</p>
+            <p className="font-light">&copy; 2024 Knowhere Corp. All rights reserved.</p>
           </div>
         </div>
       </footer>

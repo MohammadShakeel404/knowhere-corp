@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -53,7 +52,7 @@ const Navigation: React.FC = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0">
-              <span className="font-semibold text-xl text-white">MarketingAI</span>
+              <span className="font-semibold text-xl text-white">Knowhere Corp</span>
             </Link>
           </div>
 
