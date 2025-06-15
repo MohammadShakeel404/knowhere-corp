@@ -65,37 +65,37 @@ const AI = () => {
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-blue-900/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-blue-900/20"></div>
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 backdrop-blur-xl mb-8 hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 transition-all duration-500">
-            <Cpu className="w-5 h-5 mr-3 text-purple-400" />
-            <span className="text-sm text-white/80 font-light">Powered by Advanced AI</span>
+          <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-400/30 backdrop-blur-xl mb-8 hover:bg-gradient-to-r hover:from-purple-500/30 hover:to-blue-500/30 transition-all duration-500">
+            <Cpu className="w-5 h-5 mr-3 text-purple-300" />
+            <span className="text-sm text-purple-100 font-medium">Powered by Advanced AI</span>
           </div>
           
-          <h1 className="text-7xl md:text-9xl font-extralight text-white mb-8 tracking-tight leading-none">
+          <h1 className="text-6xl md:text-8xl font-extralight text-white mb-8 tracking-tight leading-none">
             Artificial
-            <span className="block bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-purple-300 via-blue-300 to-cyan-300 bg-clip-text text-transparent font-light">
               Intelligence
             </span>
-            <span className="block text-6xl md:text-8xl mt-4">
+            <span className="block text-5xl md:text-7xl mt-4 text-gray-100">
               That Works
             </span>
           </h1>
           
-          <p className="text-2xl md:text-3xl text-white/50 max-w-4xl mx-auto font-light leading-relaxed mb-12">
+          <p className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto font-light leading-relaxed mb-12">
             Experience the future of marketing with AI that understands your business, 
             predicts customer behavior, and creates campaigns that convert.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <Link to="/signup">
-              <Button className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white h-16 px-10 rounded-full text-lg font-medium transition-all duration-300 hover:scale-105 group shadow-2xl shadow-purple-500/25">
+              <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white h-16 px-10 rounded-full text-lg font-medium transition-all duration-300 hover:scale-105 group shadow-2xl shadow-purple-500/30 border-0">
                 Experience AI Now
                 <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
               </Button>
             </Link>
             <Link to="/features">
-              <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 h-16 px-10 rounded-full text-lg font-light transition-all duration-300 hover:scale-105">
+              <Button variant="outline" className="border-gray-400 text-gray-200 hover:bg-gray-800 hover:text-white h-16 px-10 rounded-full text-lg font-light transition-all duration-300 hover:scale-105 bg-transparent">
                 Explore Features
               </Button>
             </Link>
@@ -107,10 +107,10 @@ const AI = () => {
       <section className="py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-            <h2 className="text-5xl md:text-7xl font-extralight text-white mb-8 tracking-tight">
+            <h2 className="text-4xl md:text-6xl font-extralight text-white mb-8 tracking-tight">
               AI Capabilities
             </h2>
-            <p className="text-xl text-white/50 max-w-3xl mx-auto font-light leading-relaxed">
+            <p className="text-lg text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
               Our AI doesn't just automate tasks—it thinks, learns, and evolves 
               to deliver results that exceed human capabilities.
             </p>
@@ -120,17 +120,17 @@ const AI = () => {
             {capabilities.map((capability, index) => (
               <Card 
                 key={index} 
-                className="bg-gradient-to-br from-white/5 to-white/[0.02] border-white/10 backdrop-blur-xl hover:bg-gradient-to-br hover:from-white/10 hover:to-white/5 transition-all duration-500 hover:scale-105 group cursor-pointer"
+                className="bg-gradient-to-br from-gray-900/80 to-gray-800/60 border-gray-700/50 backdrop-blur-xl hover:bg-gradient-to-br hover:from-gray-800/90 hover:to-gray-700/70 transition-all duration-500 hover:scale-105 group cursor-pointer hover:border-gray-600/60"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <CardContent className="p-8">
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${capability.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${capability.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                     <capability.icon className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-2xl font-light text-white mb-4 group-hover:text-white/90 transition-colors">
+                  <h3 className="text-xl font-medium text-white mb-4 group-hover:text-gray-100 transition-colors">
                     {capability.title}
                   </h3>
-                  <p className="text-white/60 font-light leading-relaxed group-hover:text-white/70 transition-colors">
+                  <p className="text-gray-300 font-light leading-relaxed group-hover:text-gray-200 transition-colors text-sm">
                     {capability.description}
                   </p>
                 </CardContent>
@@ -141,30 +141,30 @@ const AI = () => {
       </section>
 
       {/* AI Statistics Section */}
-      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-white/[0.02] to-transparent">
+      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900/30 to-transparent">
         <div className="max-w-6xl mx-auto text-center">
-          <h3 className="text-4xl md:text-6xl font-extralight text-white mb-16 tracking-tight">
+          <h3 className="text-3xl md:text-5xl font-extralight text-white mb-16 tracking-tight">
             AI Performance Metrics
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="group cursor-pointer">
-              <div className="text-6xl md:text-8xl font-extralight bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-5xl md:text-7xl font-extralight bg-gradient-to-r from-purple-300 to-blue-300 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
                 99.7%
               </div>
-              <p className="text-xl text-white/60 font-light">Accuracy Rate</p>
+              <p className="text-lg text-gray-300 font-light">Accuracy Rate</p>
             </div>
             <div className="group cursor-pointer">
-              <div className="text-6xl md:text-8xl font-extralight bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-5xl md:text-7xl font-extralight bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
                 10x
               </div>
-              <p className="text-xl text-white/60 font-light">Faster Processing</p>
+              <p className="text-lg text-gray-300 font-light">Faster Processing</p>
             </div>
             <div className="group cursor-pointer">
-              <div className="text-6xl md:text-8xl font-extralight bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-5xl md:text-7xl font-extralight bg-gradient-to-r from-cyan-300 to-purple-300 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
                 24/7
               </div>
-              <p className="text-xl text-white/60 font-light">Continuous Learning</p>
+              <p className="text-lg text-gray-300 font-light">Continuous Learning</p>
             </div>
           </div>
         </div>
@@ -173,17 +173,17 @@ const AI = () => {
       {/* CTA Section */}
       <section className="py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-5xl md:text-7xl font-extralight text-white mb-8 tracking-tight leading-tight">
+          <h3 className="text-4xl md:text-6xl font-extralight text-white mb-8 tracking-tight leading-tight">
             Ready to Harness
-            <span className="block bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-purple-300 to-blue-300 bg-clip-text text-transparent">
               AI Power?
             </span>
           </h3>
-          <p className="text-xl text-white/50 mb-12 font-light max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-gray-300 mb-12 font-light max-w-2xl mx-auto leading-relaxed">
             Join the AI revolution and transform your marketing with intelligence that never sleeps
           </p>
           <Link to="/signup">
-            <Button className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white h-16 px-12 rounded-full text-lg font-medium transition-all duration-300 hover:scale-105 group shadow-2xl shadow-purple-500/25">
+            <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white h-16 px-12 rounded-full text-lg font-medium transition-all duration-300 hover:scale-105 group shadow-2xl shadow-purple-500/30 border-0">
               Start AI Journey
               <Sparkles className="w-6 h-6 ml-3 group-hover:rotate-12 transition-transform duration-300" />
             </Button>
@@ -192,7 +192,7 @@ const AI = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-16 px-4 sm:px-6 lg:px-8">
+      <footer className="border-t border-gray-800 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-3 mb-8 md:mb-0">
@@ -201,14 +201,14 @@ const AI = () => {
               </div>
               <span className="text-xl font-light text-white">MarketingAI</span>
             </div>
-            <div className="flex space-x-8 text-white/60">
+            <div className="flex space-x-8 text-gray-400">
               <Link to="/about" className="hover:text-white transition-colors font-light">About</Link>
               <Link to="/contact" className="hover:text-white transition-colors font-light">Contact</Link>
               <Link to="/privacy" className="hover:text-white transition-colors font-light">Privacy</Link>
               <Link to="/terms" className="hover:text-white transition-colors font-light">Terms</Link>
             </div>
           </div>
-          <div className="mt-12 pt-8 border-t border-white/10 text-center text-white/40">
+          <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500">
             <p className="font-light">&copy; 2024 MarketingAI. All rights reserved.</p>
           </div>
         </div>
