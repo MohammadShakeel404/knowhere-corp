@@ -15,11 +15,8 @@ import { Button } from '@/components/ui/button';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
-
-  // Check if user is admin (you can modify this logic based on your needs)
-  const isAdmin = user?.email === 'admin@knowherecorp.com' || user?.user_metadata?.role === 'admin';
 
   useEffect(() => {
     if (!loading && !user) {
@@ -58,7 +55,7 @@ const Admin = () => {
   }
 
   // Show access denied if not admin
-  if (user && !isAdmin) {
+  if (user && !isAdmin()) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navigation />
