@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,7 @@ import {
   RefreshCw,
   Plus,
   Sparkles,
-  FileTemplate,
+  File,
   Info
 } from 'lucide-react';
 import { SupabaseAIService } from '@/services/SupabaseAIService';
@@ -346,7 +345,7 @@ const AIBusinessDashboard: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 pt-20 sm:pt-24">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 pt-16 sm:pt-20">
         <KeyboardShortcuts
           onNewInsight={() => setActiveTab('generate')}
           onRefresh={loadUserInsights}
@@ -433,7 +432,7 @@ const AIBusinessDashboard: React.FC = () => {
                         variant="outline"
                         className="rounded-xl"
                       >
-                        <FileTemplate className="w-4 h-4 mr-2" />
+                        <File className="w-4 h-4 mr-2" />
                         Custom Insight Instead
                       </Button>
                     </div>
@@ -447,7 +446,7 @@ const AIBusinessDashboard: React.FC = () => {
                           variant="outline"
                           className="rounded-xl mb-6"
                         >
-                          <FileTemplate className="w-4 h-4 mr-2" />
+                          <File className="w-4 h-4 mr-2" />
                           Use Templates
                         </Button>
                       </div>
