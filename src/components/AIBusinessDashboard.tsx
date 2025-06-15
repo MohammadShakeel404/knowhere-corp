@@ -20,14 +20,19 @@ import {
   AlertCircle,
   CheckCircle,
   TrendingUp,
-  Database
+  Database,
+  MessageSquare,
+  Target,
+  Menu,
+  Sparkles
 } from 'lucide-react';
 import { AIService } from '@/services/AIService';
+import { BusinessAnalyticsService } from '@/services/BusinessAnalyticsService';
 import BusinessInsightCard from './BusinessInsightCard';
 import BusinessDashboardStats from './BusinessDashboardStats';
 import SupabaseStatus from './SupabaseStatus';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 interface AIInsight {
   id: string;
@@ -589,7 +594,7 @@ const AIBusinessDashboard: React.FC = () => {
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4 mr-2" />
-                      Initialize AI Manager
+                      Update API Key
                     </>
                   )}
                 </Button>
