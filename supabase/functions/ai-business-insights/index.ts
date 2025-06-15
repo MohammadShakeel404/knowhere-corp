@@ -23,8 +23,8 @@ serve(async (req) => {
 
     // Create Supabase client
     const supabaseClient = createClient(
-      Denv.get('SUPABASE_URL') ?? '',
-      Denv.get('SUPABASE_ANON_KEY') ?? '',
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
         global: {
           headers: { Authorization: authHeader },
@@ -38,7 +38,7 @@ serve(async (req) => {
       throw new Error('Authentication required')
     }
 
-    const openaiApiKey = Denv.get('OPENAI_API_KEY')
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
     if (!openaiApiKey) {
       throw new Error('OpenAI API key not configured')
     }
