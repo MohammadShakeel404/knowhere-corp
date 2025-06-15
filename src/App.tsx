@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Index from '@/pages/Index';
@@ -15,12 +16,14 @@ import NotFound from '@/pages/NotFound';
 import AIBusiness from '@/pages/AIBusiness';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from "@/components/ui/toaster"
-import { QueryClient } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
     <Router>
-      <QueryClient>
+      <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <div className="min-h-screen bg-background font-sans antialiased">
             <Routes>
@@ -41,7 +44,7 @@ function App() {
             <Toaster />
           </div>
         </AuthProvider>
-      </QueryClient>
+      </QueryClientProvider>
     </Router>
   );
 }
