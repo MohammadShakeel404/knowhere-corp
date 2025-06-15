@@ -123,8 +123,8 @@ const Features = () => {
             <div className="flex space-x-8 text-white/60">
               <Link to="/about" className="hover:text-white transition-colors font-light">About</Link>
               <Link to="/contact" className="hover:text-white transition-colors font-light">Contact</Link>
-              <a href="#" className="hover:text-white transition-colors font-light">Privacy</a>
-              <a href="#" className="hover:text-white transition-colors font-light">Terms</a>
+              <Link to="/privacy" className="hover:text-white transition-colors font-light">Privacy</Link>
+              <Link to="/terms" className="hover:text-white transition-colors font-light">Terms</Link>
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-white/10 text-center text-white/40">
