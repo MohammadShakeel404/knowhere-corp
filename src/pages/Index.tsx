@@ -7,6 +7,8 @@ import { ServiceCard } from "@/components/ServiceCard";
 import { HeroSection } from "@/components/HeroSection";
 import { StatsSection } from "@/components/StatsSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
+import { Navigation } from "@/components/Navigation";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const services = [
@@ -56,30 +58,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Navigation */}
-      <nav className="border-b border-white/10 backdrop-blur-md bg-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                <Brain className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-white">MarketingAI</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" className="text-white hover:text-purple-300">
-                Features
-              </Button>
-              <Button variant="ghost" className="text-white hover:text-purple-300">
-                Pricing
-              </Button>
-              <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                Get Started
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       <HeroSection />
       <StatsSection />
@@ -145,10 +124,12 @@ const Index = () => {
                   <span className="text-white">AI creates and publishes content automatically</span>
                 </div>
               </div>
-              <Button className="mt-8 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-lg px-8 py-3">
-                Start Automation
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
+              <Link to="/signup">
+                <Button className="mt-8 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-lg px-8 py-3">
+                  Start Automation
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
             </div>
             <div className="relative">
               <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-8 backdrop-blur-sm border border-white/10">
@@ -199,10 +180,12 @@ const Index = () => {
             Join thousands of businesses already using AI to scale their marketing efforts
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-lg px-8 py-4">
-              Start Free Trial
-              <Sparkles className="w-5 h-5 ml-2" />
-            </Button>
+            <Link to="/signup">
+              <Button size="lg" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-lg px-8 py-4">
+                Start Free Trial
+                <Sparkles className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
             <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/5 text-lg px-8 py-4">
               Watch Demo
             </Button>
@@ -221,9 +204,10 @@ const Index = () => {
               <span className="text-xl font-bold text-white">MarketingAI</span>
             </div>
             <div className="flex space-x-6 text-gray-400">
+              <Link to="/about" className="hover:text-white transition-colors">About</Link>
+              <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
               <a href="#" className="hover:text-white transition-colors">Privacy</a>
               <a href="#" className="hover:text-white transition-colors">Terms</a>
-              <a href="#" className="hover:text-white transition-colors">Support</a>
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-white/10 text-center text-gray-400">
