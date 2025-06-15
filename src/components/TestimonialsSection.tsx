@@ -9,58 +9,69 @@ export const TestimonialsSection = () => {
       role: "CEO, TechStart",
       content: "This platform completely transformed our marketing strategy. In just one week, we had a complete brand identity, website, and automated social media presence.",
       rating: 5,
-      avatar: "SC"
+      avatar: "SC",
+      company: "TechStart"
     },
     {
       name: "Marcus Rodriguez",
       role: "Founder, Local Bistro",
       content: "The AI understood our restaurant's vibe perfectly. It created content that actually sounds like us and our engagement has tripled since we started using it.",
       rating: 5,
-      avatar: "MR"
+      avatar: "MR",
+      company: "Local Bistro"
     },
     {
       name: "Emily Watson",
       role: "Marketing Director, Fashion Co",
       content: "We went from spending 20 hours a week on content creation to just reviewing and approving. The quality is consistently amazing across all platforms.",
       rating: 5,
-      avatar: "EW"
+      avatar: "EW",
+      company: "Fashion Co"
     }
   ];
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8">
+    <section className="py-32 px-4 sm:px-6 lg:px-8 bg-black">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h3 className="text-3xl font-bold text-white mb-4">
-            Loved by Businesses Worldwide
+        <div className="text-center mb-20">
+          <h3 className="text-4xl md:text-5xl font-light text-white mb-6">
+            What our clients say
           </h3>
-          <p className="text-xl text-gray-300">
-            See what our customers are saying about their transformation
+          <p className="text-xl text-white/60 font-light">
+            Real stories from businesses that transformed with AI
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
-            <Card key={index} className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
-              <CardContent className="p-8">
-                <div className="flex items-center mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <Quote className="w-8 h-8 text-purple-400 mb-4 opacity-50" />
-                <p className="text-gray-300 mb-6 leading-relaxed">"{testimonial.content}"</p>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
-                    {testimonial.avatar}
+            <div key={index} className="group">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <Card className="relative bg-white/[0.02] border-white/10 backdrop-blur-xl hover:bg-white/[0.05] transition-all duration-500 rounded-3xl overflow-hidden h-full">
+                <CardContent className="p-8">
+                  <div className="flex items-center mb-6">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                    ))}
                   </div>
-                  <div>
-                    <div className="text-white font-semibold">{testimonial.name}</div>
-                    <div className="text-gray-400 text-sm">{testimonial.role}</div>
+                  
+                  <Quote className="w-8 h-8 text-white/20 mb-6" />
+                  
+                  <p className="text-white/80 mb-8 leading-relaxed font-light text-lg">
+                    "{testimonial.content}"
+                  </p>
+                  
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full flex items-center justify-center text-white font-medium mr-4 backdrop-blur-md">
+                      {testimonial.avatar}
+                    </div>
+                    <div>
+                      <div className="text-white font-medium">{testimonial.name}</div>
+                      <div className="text-white/50 text-sm font-light">{testimonial.role}</div>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           ))}
         </div>
       </div>

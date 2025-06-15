@@ -57,109 +57,96 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-black">
       <Navigation />
 
       <HeroSection />
       <StatsSection />
 
       {/* Services Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-black">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <Badge className="mb-4 bg-purple-500/20 text-purple-300 border-purple-500/30">
-              <Sparkles className="w-4 h-4 mr-1" />
+          <div className="text-center mb-20">
+            <Badge className="mb-6 bg-white/10 text-white border-white/20 backdrop-blur-md px-6 py-2">
+              <Sparkles className="w-4 h-4 mr-2" />
               AI-Powered Services
             </Badge>
-            <h2 className="text-4xl font-bold text-white mb-6">
+            <h2 className="text-4xl md:text-5xl font-light text-white mb-6">
               Everything Your Business Needs
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-white/60 max-w-3xl mx-auto font-light">
               From branding to deployment, our AI handles every aspect of your digital marketing strategy
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <ServiceCard key={index} service={service} />
+              <ServiceCard key={index} service={service} index={index} />
             ))}
           </div>
         </div>
       </section>
 
       {/* Automated Content Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-purple-900/20 to-pink-900/20">
+      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-neutral-900 to-black">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <Badge className="mb-4 bg-green-500/20 text-green-300 border-green-500/30">
-                <Zap className="w-4 h-4 mr-1" />
+              <Badge className="mb-6 bg-green-500/20 text-green-300 border-green-500/30 backdrop-blur-md px-6 py-2">
+                <Zap className="w-4 h-4 mr-2" />
                 Full Automation
               </Badge>
-              <h3 className="text-3xl font-bold text-white mb-6">
-                Connect. Describe. Watch Magic Happen.
+              <h3 className="text-4xl md:text-5xl font-light text-white mb-8">
+                Connect. Describe. <br />
+                <span className="text-white/60">Watch Magic Happen.</span>
               </h3>
-              <p className="text-lg text-gray-300 mb-8">
+              <p className="text-lg text-white/70 mb-12 font-light leading-relaxed">
                 Simply connect your social media accounts, tell us your niche, and our AI will create and publish 
                 engaging content across all platforms - reels, images, long-form posts - with optimized captions 
                 and hashtags, completely hands-free.
               </p>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">1</span>
+              <div className="space-y-6 mb-12">
+                {[
+                  "Connect your social media accounts",
+                  "Describe your business niche", 
+                  "AI creates and publishes content automatically"
+                ].map((step, index) => (
+                  <div key={index} className="flex items-center space-x-4">
+                    <div className="w-8 h-8 bg-green-500/20 backdrop-blur-md rounded-full flex items-center justify-center border border-green-500/30">
+                      <span className="text-green-300 font-medium text-sm">{index + 1}</span>
+                    </div>
+                    <span className="text-white/80 font-light">{step}</span>
                   </div>
-                  <span className="text-white">Connect your social media accounts</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">2</span>
-                  </div>
-                  <span className="text-white">Describe your business niche</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">3</span>
-                  </div>
-                  <span className="text-white">AI creates and publishes content automatically</span>
-                </div>
+                ))}
               </div>
               <Link to="/signup">
-                <Button className="mt-8 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-lg px-8 py-3">
+                <Button className="bg-white text-black hover:bg-white/90 font-medium px-8 py-4 rounded-full text-lg transition-all duration-300 hover:scale-105">
                   Start Automation
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
             </div>
             <div className="relative">
-              <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-8 backdrop-blur-sm border border-white/10">
+              <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-8 backdrop-blur-xl">
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <span className="text-white font-semibold">Content Pipeline</span>
-                    <Badge className="bg-green-500/20 text-green-300">Active</Badge>
+                    <span className="text-white font-light">Content Pipeline</span>
+                    <Badge className="bg-green-500/20 text-green-300 border-green-500/30">Active</Badge>
                   </div>
                   <div className="space-y-4">
-                    <div className="bg-white/5 rounded-lg p-4">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <Image className="w-5 h-5 text-blue-400" />
-                        <span className="text-white text-sm">Instagram Reel</span>
+                    {[
+                      { icon: Image, platform: "Instagram Reel", status: "Posted 2 hours ago • 1.2K views", color: "blue" },
+                      { icon: Share2, platform: "LinkedIn Article", status: "Scheduled for tomorrow • 847 impressions", color: "purple" },
+                      { icon: Image, platform: "Facebook Post", status: "Publishing now • Engagement boost detected", color: "pink" }
+                    ].map((item, index) => (
+                      <div key={index} className="bg-white/[0.02] rounded-2xl p-4 border border-white/5">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <item.icon className={`w-5 h-5 text-${item.color}-400`} />
+                          <span className="text-white text-sm font-light">{item.platform}</span>
+                        </div>
+                        <p className="text-white/60 text-sm font-light">{item.status}</p>
                       </div>
-                      <p className="text-gray-300 text-sm">Posted 2 hours ago • 1.2K views</p>
-                    </div>
-                    <div className="bg-white/5 rounded-lg p-4">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <Share2 className="w-5 h-5 text-purple-400" />
-                        <span className="text-white text-sm">LinkedIn Article</span>
-                      </div>
-                      <p className="text-gray-300 text-sm">Scheduled for tomorrow • 847 impressions</p>
-                    </div>
-                    <div className="bg-white/5 rounded-lg p-4">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <Image className="w-5 h-5 text-pink-400" />
-                        <span className="text-white text-sm">Facebook Post</span>
-                      </div>
-                      <p className="text-gray-300 text-sm">Publishing now • Engagement boost detected</p>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -171,22 +158,23 @@ const Index = () => {
       <TestimonialsSection />
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-black">
         <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-4xl font-bold text-white mb-6">
-            Ready to Transform Your Digital Marketing?
+          <h3 className="text-4xl md:text-5xl font-light text-white mb-8">
+            Ready to Transform Your <br />
+            <span className="text-white/60">Digital Marketing?</span>
           </h3>
-          <p className="text-xl text-gray-300 mb-10">
+          <p className="text-xl text-white/60 mb-12 font-light">
             Join thousands of businesses already using AI to scale their marketing efforts
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link to="/signup">
-              <Button size="lg" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-lg px-8 py-4">
+              <Button size="lg" className="bg-white text-black hover:bg-white/90 font-medium px-12 py-4 rounded-full text-lg transition-all duration-300 hover:scale-105">
                 Start Free Trial
                 <Sparkles className="w-5 h-5 ml-2" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/5 text-lg px-8 py-4">
+            <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 backdrop-blur-md font-light px-12 py-4 rounded-full text-lg">
               Watch Demo
             </Button>
           </div>
@@ -194,24 +182,24 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="border-t border-white/10 py-16 px-4 sm:px-6 lg:px-8 bg-black">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+            <div className="flex items-center space-x-3 mb-8 md:mb-0">
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <Brain className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">MarketingAI</span>
+              <span className="text-xl font-light text-white">MarketingAI</span>
             </div>
-            <div className="flex space-x-6 text-gray-400">
-              <Link to="/about" className="hover:text-white transition-colors">About</Link>
-              <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
-              <a href="#" className="hover:text-white transition-colors">Privacy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <div className="flex space-x-8 text-white/60">
+              <Link to="/about" className="hover:text-white transition-colors font-light">About</Link>
+              <Link to="/contact" className="hover:text-white transition-colors font-light">Contact</Link>
+              <a href="#" className="hover:text-white transition-colors font-light">Privacy</a>
+              <a href="#" className="hover:text-white transition-colors font-light">Terms</a>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-white/10 text-center text-gray-400">
-            <p>&copy; 2024 MarketingAI. All rights reserved. Transforming businesses with AI-powered marketing.</p>
+          <div className="mt-12 pt-8 border-t border-white/10 text-center text-white/40">
+            <p className="font-light">&copy; 2024 MarketingAI. All rights reserved. Transforming businesses with AI-powered marketing.</p>
           </div>
         </div>
       </footer>
