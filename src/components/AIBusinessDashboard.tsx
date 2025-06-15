@@ -46,6 +46,7 @@ const AIBusinessDashboard: React.FC = () => {
   const [isLoadingInsights, setIsLoadingInsights] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [activeTab, setActiveTab] = useState('generate');
 
   const analysisTypes = [
     { value: 'analysis', label: 'Analysis', icon: BarChart3, color: 'from-blue-500 to-cyan-500' },
@@ -249,21 +250,21 @@ const AIBusinessDashboard: React.FC = () => {
   // Show login message if not authenticated
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-lg">
+          <Card className="shadow-2xl border-0 bg-white/90 backdrop-blur-xl">
             <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
                 <Brain className="w-8 h-8 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-3">AI Business Manager</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">AI Business Manager</h2>
               <p className="text-gray-600 mb-6">Unlock intelligent insights for your business with AI-powered analysis</p>
-              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 border border-indigo-200">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
                 <div className="flex items-center justify-center mb-2">
-                  <Sparkles className="w-5 h-5 text-indigo-600 mr-2" />
-                  <span className="text-sm font-semibold text-indigo-800">Sign in to get started</span>
+                  <Sparkles className="w-5 h-5 text-blue-600 mr-2" />
+                  <span className="text-sm font-semibold text-blue-800">Sign in to get started</span>
                 </div>
-                <p className="text-xs text-indigo-700">
+                <p className="text-xs text-blue-700">
                   Generate insights, save them securely, and access your personalized business dashboard.
                 </p>
               </div>
@@ -275,16 +276,16 @@ const AIBusinessDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
-        {/* Enhanced Header */}
-        <div className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-6">
-            <div className="space-y-2">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 max-w-7xl">
+        {/* Header */}
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div className="space-y-1">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 AI Business Manager
               </h1>
-              <p className="text-gray-600 text-base sm:text-lg max-w-2xl">
+              <p className="text-gray-600 text-sm sm:text-base max-w-2xl">
                 Transform your business with AI-powered insights and strategic recommendations
               </p>
             </div>
@@ -293,7 +294,7 @@ const AIBusinessDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Enhanced Stats */}
+          {/* Stats */}
           {analytics.totalInsights > 0 && (
             <div className="mb-6">
               <BusinessDashboardStats analytics={analytics} />
@@ -301,31 +302,31 @@ const AIBusinessDashboard: React.FC = () => {
           )}
         </div>
 
-        {/* Enhanced Tabs */}
-        <Tabs defaultValue="generate" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 h-12 p-1 bg-white/70 backdrop-blur-sm border border-gray-200 shadow-sm">
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList className="grid w-full grid-cols-3 h-11 p-1 bg-white/80 backdrop-blur-sm border border-gray-200 shadow-sm rounded-lg">
             <TabsTrigger 
               value="generate" 
-              className="flex items-center gap-2 py-3 px-4 text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
+              className="flex items-center gap-2 py-2.5 px-3 text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all rounded-md"
             >
               <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">Generate</span>
             </TabsTrigger>
             <TabsTrigger 
               value="insights" 
-              className="flex items-center gap-2 py-3 px-4 text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
+              className="flex items-center gap-2 py-2.5 px-3 text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all rounded-md"
             >
               <Lightbulb className="w-4 h-4" />
               <span className="hidden sm:inline">Insights</span>
               {insights.length > 0 && (
-                <Badge variant="secondary" className="text-xs h-5 px-2">
+                <Badge variant="secondary" className="text-xs h-5 px-2 ml-1">
                   {insights.length}
                 </Badge>
               )}
             </TabsTrigger>
             <TabsTrigger 
               value="analytics" 
-              className="flex items-center gap-2 py-3 px-4 text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
+              className="flex items-center gap-2 py-2.5 px-3 text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all rounded-md"
             >
               <BarChart3 className="w-4 h-4" />
               <span className="hidden sm:inline">Analytics</span>
@@ -333,7 +334,7 @@ const AIBusinessDashboard: React.FC = () => {
           </TabsList>
 
           {/* Generate Tab */}
-          <TabsContent value="generate" className="space-y-6">
+          <TabsContent value="generate" className="space-y-4">
             <div className="max-w-2xl mx-auto">
               <InsightGenerationForm 
                 onGenerate={handleGenerateInsight}
@@ -343,36 +344,36 @@ const AIBusinessDashboard: React.FC = () => {
           </TabsContent>
 
           {/* Insights Tab */}
-          <TabsContent value="insights" className="space-y-6">
-            <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h2 className="text-xl font-bold text-gray-800 flex items-center">
-                  <Brain className="w-6 h-6 mr-3 text-indigo-600" />
+          <TabsContent value="insights" className="space-y-4">
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-800 flex items-center">
+                  <Brain className="w-5 h-6 mr-2 text-blue-600" />
                   Your Insights ({filteredInsights.length})
                 </h2>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <Button
                     onClick={loadUserInsights}
                     variant="outline"
                     size="sm"
                     disabled={isLoadingInsights}
-                    className="h-9"
+                    className="h-9 text-xs"
                   >
                     {isLoadingInsights ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       <RefreshCw className="w-4 h-4" />
                     )}
-                    <span className="ml-2 hidden sm:inline">Refresh</span>
+                    <span className="ml-1.5 hidden sm:inline">Refresh</span>
                   </Button>
                   <Button
                     onClick={handleExportAll}
                     variant="outline"
                     size="sm"
-                    className="h-9"
+                    className="h-9 text-xs"
                   >
                     <Download className="w-4 h-4" />
-                    <span className="ml-2 hidden sm:inline">Export All</span>
+                    <span className="ml-1.5 hidden sm:inline">Export</span>
                   </Button>
                 </div>
               </div>
@@ -387,14 +388,14 @@ const AIBusinessDashboard: React.FC = () => {
 
               {isLoadingInsights ? (
                 <Card className="border-2 border-dashed border-gray-300 bg-gray-50/50">
-                  <CardContent className="p-12 text-center">
-                    <Loader2 className="w-12 h-12 text-gray-400 mx-auto mb-4 animate-spin" />
-                    <h3 className="text-lg font-semibold text-gray-600 mb-2">Loading insights...</h3>
-                    <p className="text-gray-500">Please wait while we fetch your saved insights.</p>
+                  <CardContent className="p-8 text-center">
+                    <Loader2 className="w-10 h-10 text-gray-400 mx-auto mb-3 animate-spin" />
+                    <h3 className="text-base font-semibold text-gray-600 mb-2">Loading insights...</h3>
+                    <p className="text-sm text-gray-500">Please wait while we fetch your saved insights.</p>
                   </CardContent>
                 </Card>
               ) : filteredInsights.length > 0 ? (
-                <div className="grid gap-4 sm:gap-6">
+                <div className="grid gap-4">
                   {filteredInsights.map((insight) => (
                     <BusinessInsightCard
                       key={insight.id}
@@ -408,10 +409,10 @@ const AIBusinessDashboard: React.FC = () => {
                 </div>
               ) : (
                 <Card className="border-2 border-dashed border-gray-300 bg-gray-50/50">
-                  <CardContent className="p-12 text-center">
-                    <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-600 mb-2">No insights found</h3>
-                    <p className="text-gray-500 mb-4">
+                  <CardContent className="p-8 text-center">
+                    <AlertCircle className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+                    <h3 className="text-base font-semibold text-gray-600 mb-2">No insights found</h3>
+                    <p className="text-sm text-gray-500 mb-4">
                       {searchFilter || typeFilter !== 'all' 
                         ? 'Try adjusting your search filters or generate new insights.'
                         : 'Generate your first AI insight to get started with intelligent business analysis.'
@@ -419,8 +420,8 @@ const AIBusinessDashboard: React.FC = () => {
                     </p>
                     {!searchFilter && typeFilter === 'all' && (
                       <Button
-                        onClick={() => document.querySelector('[value="generate"]')?.click()}
-                        className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+                        onClick={() => setActiveTab('generate')}
+                        className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-sm"
                       >
                         <Plus className="w-4 h-4 mr-2" />
                         Generate First Insight
@@ -433,8 +434,8 @@ const AIBusinessDashboard: React.FC = () => {
           </TabsContent>
 
           {/* Analytics Tab */}
-          <TabsContent value="analytics" className="space-y-6">
-            <AnalyticsOverview />
+          <TabsContent value="analytics" className="space-y-4">
+            <AnalyticsOverview onNavigateToGenerate={() => setActiveTab('generate')} />
           </TabsContent>
         </Tabs>
       </div>
