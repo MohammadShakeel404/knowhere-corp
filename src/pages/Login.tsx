@@ -32,7 +32,7 @@ const Login = () => {
   const validateForm = () => {
     const newErrors: { email?: string; password?: string } = {};
 
-    if (!formData.email) {
+    if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Please enter a valid email address";
@@ -40,8 +40,6 @@ const Login = () => {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
     }
 
     setErrors(newErrors);
@@ -58,17 +56,19 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await signIn(formData.email, formData.password);
+      const { error } = await signIn(formData.email.trim(), formData.password);
       
       if (error) {
         let errorMessage = "An error occurred during login";
         
-        if (error.message.includes("Invalid login credentials")) {
+        if (error.message.includes("Invalid login credentials") || error.message.includes("invalid_credentials")) {
           errorMessage = "Invalid email or password. Please check your credentials and try again.";
         } else if (error.message.includes("Email not confirmed")) {
           errorMessage = "Please check your email and click the confirmation link before signing in.";
         } else if (error.message.includes("Too many requests")) {
           errorMessage = "Too many login attempts. Please wait a few minutes and try again.";
+        } else if (error.message.includes("signup_disabled")) {
+          errorMessage = "Sign up is currently disabled. Please contact support.";
         } else {
           errorMessage = error.message;
         }
@@ -86,6 +86,7 @@ const Login = () => {
         navigate('/');
       }
     } catch (err) {
+      console.error('Login error:', err);
       toast({
         title: "Login Failed",
         description: "An unexpected error occurred. Please try again.",
@@ -140,11 +141,11 @@ const Login = () => {
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
-                    required
                     className={`bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300 ${
                       errors.email ? 'border-red-500 focus:border-red-500' : ''
                     }`}
                     placeholder="Enter your email"
+                    disabled={isLoading}
                   />
                   {errors.email && (
                     <div className="flex items-center mt-2 text-red-400 text-sm">
@@ -164,16 +165,17 @@ const Login = () => {
                     type={showPassword ? "text" : "password"}
                     value={formData.password}
                     onChange={(e) => handleInputChange("password", e.target.value)}
-                    required
                     className={`bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 pr-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300 ${
                       errors.password ? 'border-red-500 focus:border-red-500' : ''
                     }`}
                     placeholder="Enter your password"
+                    disabled={isLoading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-4 h-5 w-5 text-white/40 hover:text-white transition-colors duration-300"
+                    disabled={isLoading}
                   >
                     {showPassword ? <EyeOff /> : <Eye />}
                   </button>
@@ -189,7 +191,7 @@ const Login = () => {
               <Button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full bg-white text-black hover:bg-white/90 h-14 rounded-2xl text-lg font-medium transition-all duration-300 hover:scale-[1.02] disabled:opacity-50"
+                className="w-full bg-white text-black hover:bg-white/90 h-14 rounded-2xl text-lg font-medium transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Signing In..." : "Sign In"}
               </Button>

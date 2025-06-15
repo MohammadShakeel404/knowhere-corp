@@ -61,15 +61,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const createProfile = async (userId: string, metadata: any) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .insert([
+          {
+            id: userId,
+            first_name: metadata?.first_name || null,
+            last_name: metadata?.last_name || null,
+            email: metadata?.email || null,
+            company: metadata?.company || null,
+            business_type: metadata?.business_type || null,
+          }
+        ]);
+
+      if (error) {
+        console.error('Error creating profile:', error);
+      } else {
+        await fetchProfile(userId);
+      }
+    } catch (error) {
+      console.error('Error creating profile:', error);
+    }
+  };
+
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth event:', event, session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          await fetchProfile(session.user.id);
+          // Use setTimeout to avoid potential recursive issues
+          setTimeout(() => {
+            fetchProfile(session.user.id);
+          }, 0);
         } else {
           setProfile(null);
         }
@@ -96,14 +125,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, metadata?: any) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: redirectUrl,
-        data: metadata
+        data: {
+          ...metadata,
+          email: email
+        }
       }
     });
+    
+    // If signup is successful and user is immediately confirmed, create profile
+    if (!error && data.user && !data.user.email_confirmed_at) {
+      console.log('User signed up successfully, email confirmation required');
+    } else if (!error && data.user && data.user.email_confirmed_at) {
+      // User is immediately confirmed, create profile
+      await createProfile(data.user.id, { ...metadata, email });
+    }
     
     return { error };
   };

@@ -52,13 +52,17 @@ const Signup = () => {
 
     if (!formData.firstName.trim()) {
       newErrors.firstName = "First name is required";
+    } else if (formData.firstName.trim().length < 2) {
+      newErrors.firstName = "First name must be at least 2 characters";
     }
 
     if (!formData.lastName.trim()) {
       newErrors.lastName = "Last name is required";
+    } else if (formData.lastName.trim().length < 2) {
+      newErrors.lastName = "Last name must be at least 2 characters";
     }
 
-    if (!formData.email) {
+    if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Please enter a valid email address";
@@ -66,8 +70,8 @@ const Signup = () => {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
     } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
       newErrors.password = "Password must contain at least one uppercase letter, one lowercase letter, and one number";
     }
@@ -103,22 +107,24 @@ const Signup = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await signUp(formData.email, formData.password, {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        company: formData.company,
+      const { error } = await signUp(formData.email.trim(), formData.password, {
+        first_name: formData.firstName.trim(),
+        last_name: formData.lastName.trim(),
+        company: formData.company.trim(),
         business_type: formData.businessType
       });
 
       if (error) {
         let errorMessage = "An error occurred during signup";
         
-        if (error.message.includes("User already registered")) {
+        if (error.message.includes("User already registered") || error.message.includes("already_registered")) {
           errorMessage = "An account with this email already exists. Please try logging in instead.";
-        } else if (error.message.includes("Password should be at least")) {
-          errorMessage = "Password is too weak. Please choose a stronger password.";
-        } else if (error.message.includes("Unable to validate email address")) {
+        } else if (error.message.includes("Password should be at least") || error.message.includes("weak_password")) {
+          errorMessage = "Password is too weak. Please choose a stronger password with at least 8 characters, including uppercase, lowercase, and numbers.";
+        } else if (error.message.includes("Unable to validate email address") || error.message.includes("invalid_email")) {
           errorMessage = "Please enter a valid email address.";
+        } else if (error.message.includes("signup_disabled")) {
+          errorMessage = "Sign up is currently disabled. Please contact support.";
         } else {
           errorMessage = error.message;
         }
@@ -130,8 +136,8 @@ const Signup = () => {
         });
       } else {
         toast({
-          title: "Account Created!",
-          description: "Please check your email to verify your account before signing in."
+          title: "Account Created Successfully!",
+          description: "Please check your email and click the confirmation link to complete your registration."
         });
         // Clear form
         setFormData({
@@ -143,8 +149,13 @@ const Signup = () => {
           businessType: "",
           agreeToTerms: false
         });
+        // Redirect to login after successful signup
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
       }
     } catch (err) {
+      console.error('Signup error:', err);
       toast({
         title: "Signup Failed",
         description: "An unexpected error occurred. Please try again.",
@@ -199,11 +210,11 @@ const Signup = () => {
                       id="firstName"
                       value={formData.firstName}
                       onChange={(e) => handleInputChange("firstName", e.target.value)}
-                      required
                       className={`bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300 ${
                         errors.firstName ? 'border-red-500 focus:border-red-500' : ''
                       }`}
                       placeholder="John"
+                      disabled={isLoading}
                     />
                     {errors.firstName && (
                       <div className="flex items-center mt-1 text-red-400 text-xs">
@@ -219,11 +230,11 @@ const Signup = () => {
                     id="lastName"
                     value={formData.lastName}
                     onChange={(e) => handleInputChange("lastName", e.target.value)}
-                    required
                     className={`bg-white/5 border-white/10 text-white placeholder-white/40 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300 ${
                       errors.lastName ? 'border-red-500 focus:border-red-500' : ''
                     }`}
                     placeholder="Doe"
+                    disabled={isLoading}
                   />
                   {errors.lastName && (
                     <div className="flex items-center mt-1 text-red-400 text-xs">
@@ -347,6 +358,7 @@ const Signup = () => {
                     checked={formData.agreeToTerms}
                     onCheckedChange={(checked) => handleInputChange("agreeToTerms", checked as boolean)}
                     className="border-white/20 data-[state=checked]:bg-white data-[state=checked]:border-white data-[state=checked]:text-black"
+                    disabled={isLoading}
                   />
                   <Label htmlFor="terms" className="text-sm text-white/60 font-light">
                     I agree to the{" "}
@@ -366,7 +378,7 @@ const Signup = () => {
               <Button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full bg-white text-black hover:bg-white/90 h-14 rounded-2xl text-lg font-medium transition-all duration-300 hover:scale-[1.02] disabled:opacity-50"
+                className="w-full bg-white text-black hover:bg-white/90 h-14 rounded-2xl text-lg font-medium transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Creating Account..." : "Start Free Trial"}
               </Button>
