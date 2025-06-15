@@ -65,144 +65,173 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-black overflow-hidden">
       <Navigation />
       
-      {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <Badge className="mb-4 bg-blue-500/20 text-blue-300 border-blue-500/30">
-              <Brain className="w-4 h-4 mr-1" />
-              Our Story
-            </Badge>
-            <h1 className="text-5xl font-bold text-white mb-6">
-              Democratizing <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">AI Marketing</span>
-            </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-10">
-              Founded in 2023, MarketingAI was born from a simple belief: every business should have access to enterprise-level marketing capabilities, powered by cutting-edge artificial intelligence.
-            </p>
+      {/* Hero Section - Apple-style minimal */}
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-neutral-900/20 via-transparent to-neutral-900/20"></div>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl mb-8 hover:bg-white/10 transition-all duration-500">
+            <Brain className="w-4 h-4 mr-2 text-white/60" />
+            <span className="text-sm text-white/80 font-light">Our Story</span>
           </div>
           
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+          <h1 className="text-6xl md:text-8xl font-extralight text-white mb-8 tracking-tight leading-none">
+            Democratizing
+            <span className="block bg-gradient-to-r from-white to-white/40 bg-clip-text text-transparent">
+              AI Marketing
+            </span>
+          </h1>
+          
+          <p className="text-xl md:text-2xl text-white/50 max-w-2xl mx-auto font-light leading-relaxed">
+            Founded in 2023, we believe every business should have access to
+            <br />
+            enterprise-level marketing capabilities.
+          </p>
+        </div>
+      </section>
+
+      {/* Stats Section - Cuberto style */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-4xl font-bold text-white mb-2">{stat.number}</div>
-                <div className="text-gray-300">{stat.label}</div>
+              <div key={index} className="text-center group cursor-pointer">
+                <div className="text-5xl md:text-6xl font-extralight text-white mb-4 group-hover:scale-110 transition-transform duration-500">
+                  {stat.number}
+                </div>
+                <div className="text-white/60 font-light tracking-wide uppercase text-sm">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Mission Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-purple-900/20 to-pink-900/20">
+      {/* Mission Section - Apple-style split layout */}
+      <section className="py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl font-bold text-white mb-6">Our Mission</h2>
-              <p className="text-lg text-gray-300 mb-6">
-                We're on a mission to level the playing field in digital marketing. Traditional marketing agencies charge thousands of dollars for services that our AI can deliver in minutes, with better results and complete transparency.
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div className="order-2 lg:order-1">
+              <h2 className="text-4xl md:text-6xl font-extralight text-white mb-8 tracking-tight leading-tight">
+                Our Mission
+              </h2>
+              <p className="text-xl text-white/60 mb-8 font-light leading-relaxed">
+                We're on a mission to level the playing field in digital marketing. Traditional marketing agencies charge thousands of dollars for services that our AI can deliver in minutes.
               </p>
-              <p className="text-lg text-gray-300 mb-8">
-                By combining advanced machine learning, creative AI, and automated workflows, we're making it possible for any business to compete with the biggest brands in their industry.
+              <p className="text-xl text-white/60 mb-12 font-light leading-relaxed">
+                By combining advanced machine learning, creative AI, and automated workflows, we're making it possible for any business to compete with the biggest brands.
               </p>
-              <Link to="/contact">
-                <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                  Get in Touch
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </Link>
+              <Button className="bg-white text-black hover:bg-white/90 h-14 px-8 rounded-full text-lg font-medium transition-all duration-300 hover:scale-105 group">
+                Get in Touch
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+              </Button>
             </div>
-            <div className="relative">
-              <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-8 backdrop-blur-sm border border-white/10">
+            <div className="order-1 lg:order-2 relative">
+              <div className="relative overflow-hidden rounded-3xl">
                 <img 
                   src={`https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80`}
                   alt="Team collaboration"
-                  className="w-full rounded-lg"
+                  className="w-full h-[600px] object-cover hover:scale-105 transition-transform duration-700"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Values Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      {/* Values Section - Cuberto-style cards */}
+      <section className="py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-6">Our Values</h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-6xl font-extralight text-white mb-6 tracking-tight">
+              Our Values
+            </h2>
+            <p className="text-xl text-white/50 max-w-2xl mx-auto font-light leading-relaxed">
               The principles that guide everything we do and drive our commitment to excellence.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {values.map((value, index) => (
-              <Card key={index} className="bg-white/5 border-white/10 backdrop-blur-sm text-center">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <value.icon className="w-6 h-6 text-white" />
+              <div 
+                key={index} 
+                className="group cursor-pointer"
+              >
+                <div className="p-12 rounded-3xl bg-white/[0.02] border border-white/5 backdrop-blur-xl hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 h-full">
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300`}>
+                    <value.icon className="w-8 h-8 text-white" />
                   </div>
-                  <CardTitle className="text-xl text-white">{value.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-300">{value.description}</p>
-                </CardContent>
-              </Card>
+                  <h3 className="text-2xl font-light text-white mb-4 group-hover:text-white/80 transition-colors duration-300">
+                    {value.title}
+                  </h3>
+                  <p className="text-white/60 font-light leading-relaxed text-lg">
+                    {value.description}
+                  </p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Team Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-purple-900/20 to-pink-900/20">
+      {/* Team Section - Apple-style minimal cards */}
+      <section className="py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-6">Meet Our Team</h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-6xl font-extralight text-white mb-6 tracking-tight">
+              Meet Our Team
+            </h2>
+            <p className="text-xl text-white/50 max-w-2xl mx-auto font-light leading-relaxed">
               The brilliant minds behind MarketingAI, combining expertise in AI, marketing, and product development.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {team.map((member, index) => (
-              <Card key={index} className="bg-white/5 border-white/10 backdrop-blur-sm text-center">
-                <CardHeader>
-                  <img 
-                    src={`https://images.unsplash.com/${member.image}?auto=format&fit=crop&w=300&q=80`}
-                    alt={member.name}
-                    className="w-20 h-20 rounded-full mx-auto mb-4 object-cover"
-                  />
-                  <CardTitle className="text-xl text-white">{member.name}</CardTitle>
-                  <CardDescription className="text-purple-300">{member.role}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-300 text-sm">{member.bio}</p>
-                </CardContent>
-              </Card>
+              <div key={index} className="group cursor-pointer">
+                <div className="text-center p-8 rounded-3xl bg-white/[0.02] border border-white/5 backdrop-blur-xl hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500">
+                  <div className="relative mb-6 group-hover:scale-105 transition-transform duration-300">
+                    <img 
+                      src={`https://images.unsplash.com/${member.image}?auto=format&fit=crop&w=300&q=80`}
+                      alt={member.name}
+                      className="w-24 h-24 rounded-full mx-auto object-cover"
+                    />
+                  </div>
+                  <h3 className="text-xl font-light text-white mb-2 group-hover:text-white/80 transition-colors duration-300">
+                    {member.name}
+                  </h3>
+                  <p className="text-white/60 font-light mb-4 text-sm">
+                    {member.role}
+                  </p>
+                  <p className="text-white/50 text-sm font-light leading-relaxed">
+                    {member.bio}
+                  </p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-4xl font-bold text-white mb-6">
-            Ready to Join Our Journey?
+          <h3 className="text-4xl md:text-6xl font-extralight text-white mb-8 tracking-tight leading-tight">
+            Ready to Join
+            <span className="block">Our Journey?</span>
           </h3>
-          <p className="text-xl text-gray-300 mb-10">
-            Whether you're a business looking to transform your marketing or a talented individual wanting to join our team, we'd love to hear from you.
+          <p className="text-xl text-white/50 mb-12 font-light max-w-2xl mx-auto leading-relaxed">
+            Whether you're a business looking to transform your marketing or a talented individual wanting to join our team.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link to="/signup">
-              <Button size="lg" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-lg px-8 py-4">
+              <Button className="bg-white text-black hover:bg-white/90 h-14 px-8 rounded-full text-lg font-medium transition-all duration-300 hover:scale-105 group">
                 Start Your Journey
-                <ArrowRight className="w-5 h-5 ml-2" />
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
               </Button>
             </Link>
             <Link to="/contact">
-              <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/5 text-lg px-8 py-4">
+              <Button variant="outline" className="border-white/20 text-white hover:bg-white/5 h-14 px-8 rounded-full text-lg font-light">
                 Contact Us
               </Button>
             </Link>
@@ -211,25 +240,25 @@ const About = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="border-t border-white/10 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+            <div className="flex items-center space-x-3 mb-8 md:mb-0">
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <Brain className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">MarketingAI</span>
+              <span className="text-xl font-light text-white">MarketingAI</span>
             </div>
-            <div className="flex space-x-6 text-gray-400">
-              <Link to="/features" className="hover:text-white transition-colors">Features</Link>
-              <Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link>
-              <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
-              <a href="#" className="hover:text-white transition-colors">Privacy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <div className="flex space-x-8 text-white/60">
+              <Link to="/features" className="hover:text-white transition-colors font-light">Features</Link>
+              <Link to="/pricing" className="hover:text-white transition-colors font-light">Pricing</Link>
+              <Link to="/contact" className="hover:text-white transition-colors font-light">Contact</Link>
+              <a href="#" className="hover:text-white transition-colors font-light">Privacy</a>
+              <a href="#" className="hover:text-white transition-colors font-light">Terms</a>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-white/10 text-center text-gray-400">
-            <p>&copy; 2024 MarketingAI. All rights reserved. Transforming businesses with AI-powered marketing.</p>
+          <div className="mt-12 pt-8 border-t border-white/10 text-center text-white/40">
+            <p className="font-light">&copy; 2024 MarketingAI. All rights reserved. Transforming businesses with AI-powered marketing.</p>
           </div>
         </div>
       </footer>

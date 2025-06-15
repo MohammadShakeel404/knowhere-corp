@@ -33,61 +33,59 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-black overflow-hidden">
       <Navigation />
       
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md mx-auto">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+      {/* Hero Section - Apple-style minimal */}
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-neutral-900/20 via-transparent to-neutral-900/20"></div>
+        <div className="max-w-md mx-auto relative z-10">
+          <div className="text-center mb-12">
+            <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-8">
               <Brain className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-            <p className="text-gray-300">Sign in to your MarketingAI account</p>
+            <h1 className="text-4xl md:text-5xl font-extralight text-white mb-4 tracking-tight">
+              Welcome Back
+            </h1>
+            <p className="text-white/60 font-light text-lg">Sign in to your MarketingAI account</p>
           </div>
 
-          <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl text-white text-center">Sign In</CardTitle>
-              <CardDescription className="text-gray-300 text-center">
-                Enter your credentials to access your account
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white">Email</Label>
+          <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-xl">
+            <div className="space-y-8">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-3">
+                  <Label htmlFor="email" className="text-white/80 font-light text-sm">Email</Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Mail className="absolute left-4 top-4 h-5 w-5 text-white/40" />
                     <Input
                       id="email"
                       type="email"
                       value={formData.email}
                       onChange={(e) => handleInputChange("email", e.target.value)}
                       required
-                      className="bg-white/10 border-white/20 text-white placeholder-gray-400 pl-10"
+                      className="bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300"
                       placeholder="your@email.com"
                     />
                   </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-white">Password</Label>
+                <div className="space-y-3">
+                  <Label htmlFor="password" className="text-white/80 font-light text-sm">Password</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Lock className="absolute left-4 top-4 h-5 w-5 text-white/40" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       value={formData.password}
                       onChange={(e) => handleInputChange("password", e.target.value)}
                       required
-                      className="bg-white/10 border-white/20 text-white placeholder-gray-400 pl-10 pr-10"
+                      className="bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 pr-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300"
                       placeholder="Enter your password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 h-4 w-4 text-gray-400 hover:text-white"
+                      className="absolute right-4 top-4 h-5 w-5 text-white/40 hover:text-white transition-colors duration-300"
                     >
                       {showPassword ? <EyeOff /> : <Eye />}
                     </button>
@@ -95,14 +93,14 @@ const Login = () => {
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <Link to="/forgot-password" className="text-sm text-purple-300 hover:text-purple-200">
+                  <Link to="/forgot-password" className="text-sm text-white/60 hover:text-white font-light transition-colors duration-300">
                     Forgot password?
                   </Link>
                 </div>
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-lg py-3"
+                  className="w-full bg-white text-black hover:bg-white/90 h-14 rounded-2xl text-lg font-medium transition-all duration-300 hover:scale-[1.02]"
                 >
                   Sign In
                 </Button>
@@ -110,15 +108,15 @@ const Login = () => {
               
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <Separator className="w-full bg-white/20" />
+                  <Separator className="w-full bg-white/10" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-slate-900 px-2 text-gray-400">Or continue with</span>
+                  <span className="bg-black px-4 text-white/40 font-light">Or continue with</span>
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" className="border-white/20 text-white hover:bg-white/5">
+              <div className="grid grid-cols-2 gap-4">
+                <Button variant="outline" className="border-white/10 text-white hover:bg-white/5 h-12 rounded-2xl font-light">
                   <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                     <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -127,7 +125,7 @@ const Login = () => {
                   </svg>
                   Google
                 </Button>
-                <Button variant="outline" className="border-white/20 text-white hover:bg-white/5">
+                <Button variant="outline" className="border-white/10 text-white hover:bg-white/5 h-12 rounded-2xl font-light">
                   <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M13.397 20.997v-8.196h2.765l.411-3.209h-3.176V7.548c0-.926.258-1.56 1.587-1.56h1.684V3.127A22.336 22.336 0 0 0 14.201 3c-2.444 0-4.122 1.492-4.122 4.231v2.355H7.332v3.209h2.753v8.202h3.312z"/>
                   </svg>
@@ -135,17 +133,17 @@ const Login = () => {
                 </Button>
               </div>
               
-              <div className="text-center text-sm text-gray-300">
+              <div className="text-center text-sm text-white/60">
                 Don't have an account?{" "}
-                <Link to="/signup" className="text-purple-300 hover:text-purple-200 font-medium">
+                <Link to="/signup" className="text-white hover:text-white/80 font-light transition-colors duration-300">
                   Sign up for free
                 </Link>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
           
           <div className="mt-8 text-center">
-            <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
+            <Badge className="bg-green-500/20 text-green-300 border-green-500/30 px-4 py-2">
               <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
               14-day free trial • No credit card required
             </Badge>

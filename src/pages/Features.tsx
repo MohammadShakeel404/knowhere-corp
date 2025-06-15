@@ -54,31 +54,34 @@ const Features = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black overflow-hidden">
       <Navigation />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-black">
-        <div className="max-w-7xl mx-auto text-center">
-          <Badge className="mb-6 bg-white/10 text-white border-white/20 backdrop-blur-md px-6 py-2">
-            <Sparkles className="w-4 h-4 mr-2" />
-            Comprehensive Features
-          </Badge>
-          <h1 className="text-5xl md:text-6xl font-light text-white mb-6">
+      {/* Hero Section - Apple-style minimal */}
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-neutral-900/20 via-transparent to-neutral-900/20"></div>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl mb-8 hover:bg-white/10 transition-all duration-500">
+            <Sparkles className="w-4 h-4 mr-2 text-white/60" />
+            <span className="text-sm text-white/80 font-light">Comprehensive Features</span>
+          </div>
+          
+          <h1 className="text-6xl md:text-8xl font-extralight text-white mb-8 tracking-tight leading-none">
             Everything You Need to
-            <span className="block bg-gradient-to-r from-purple-400 to-blue-400 text-transparent bg-clip-text">
+            <span className="block bg-gradient-to-r from-white to-white/40 bg-clip-text text-transparent">
               Scale Your Business
             </span>
           </h1>
-          <p className="text-xl text-white/60 max-w-3xl mx-auto font-light">
+          
+          <p className="text-xl md:text-2xl text-white/50 max-w-2xl mx-auto font-light leading-relaxed">
             From brand creation to advanced analytics, our AI-powered platform provides 
             all the tools you need to build and grow your digital presence.
           </p>
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black">
+      {/* Features Grid - Cuberto-style layout */}
+      <section className="py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service, index) => (
@@ -89,25 +92,26 @@ const Features = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-neutral-900 to-black">
+      <section className="py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-4xl md:text-5xl font-light text-white mb-8">
-            Ready to Get Started?
+          <h3 className="text-4xl md:text-6xl font-extralight text-white mb-8 tracking-tight leading-tight">
+            Ready to Get
+            <span className="block">Started?</span>
           </h3>
-          <p className="text-xl text-white/60 mb-12 font-light">
+          <p className="text-xl text-white/50 mb-12 font-light max-w-2xl mx-auto leading-relaxed">
             Join thousands of businesses already using AI to transform their marketing
           </p>
           <Link to="/signup">
-            <Button size="lg" className="bg-white text-black hover:bg-white/90 font-medium px-12 py-4 rounded-full text-lg transition-all duration-300 hover:scale-105">
+            <Button className="bg-white text-black hover:bg-white/90 h-14 px-12 rounded-full text-lg font-medium transition-all duration-300 hover:scale-105 group">
               Start Free Trial
-              <ArrowRight className="w-5 h-5 ml-2" />
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
             </Button>
           </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-16 px-4 sm:px-6 lg:px-8 bg-black">
+      <footer className="border-t border-white/10 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-3 mb-8 md:mb-0">
