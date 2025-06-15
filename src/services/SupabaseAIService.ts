@@ -31,6 +31,7 @@ interface SavedInsight {
   action_items?: string[];
   created_at: string;
   updated_at: string;
+  user_id: string;
 }
 
 export class SupabaseAIService {
@@ -53,7 +54,8 @@ export class SupabaseAIService {
 
   static async getUserInsights(): Promise<SavedInsight[]> {
     try {
-      const { data, error } = await supabase
+      // Use type assertion since TypeScript types haven't been regenerated yet
+      const { data, error } = await (supabase as any)
         .from('ai_insights')
         .select('*')
         .order('created_at', { ascending: false });
@@ -71,7 +73,7 @@ export class SupabaseAIService {
 
   static async deleteInsight(id: string): Promise<void> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('ai_insights')
         .delete()
         .eq('id', id);
@@ -87,7 +89,7 @@ export class SupabaseAIService {
 
   static async updateInsight(id: string, updates: Partial<SavedInsight>): Promise<void> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('ai_insights')
         .update(updates)
         .eq('id', id);

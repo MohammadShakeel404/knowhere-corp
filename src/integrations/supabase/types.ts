@@ -63,6 +63,54 @@ export type Database = {
           },
         ]
       }
+      ai_insights: {
+        Row: {
+          action_items: string[] | null
+          category: string | null
+          confidence: number | null
+          content: string
+          context: string | null
+          created_at: string
+          id: string
+          priority: string | null
+          prompt: string
+          suggestions: string[] | null
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_items?: string[] | null
+          category?: string | null
+          confidence?: number | null
+          content: string
+          context?: string | null
+          created_at?: string
+          id?: string
+          priority?: string | null
+          prompt: string
+          suggestions?: string[] | null
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_items?: string[] | null
+          category?: string | null
+          confidence?: number | null
+          content?: string
+          context?: string | null
+          created_at?: string
+          id?: string
+          priority?: string | null
+          prompt?: string
+          suggestions?: string[] | null
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           business_type: string | null
