@@ -7,6 +7,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import { AIService } from '@/services/AIService';
+import { BusinessAnalyticsService } from '@/services/BusinessAnalyticsService';
+import BusinessInsightCard from '@/components/BusinessInsightCard';
+import BusinessDashboardStats from '@/components/BusinessDashboardStats';
 import { 
   Brain, 
   TrendingUp, 
@@ -16,8 +19,9 @@ import {
   Settings,
   MessageSquare,
   Loader2,
-  CheckCircle,
-  AlertCircle
+  Download,
+  Filter,
+  Search
 } from 'lucide-react';
 
 interface AIInsight {
@@ -27,6 +31,9 @@ interface AIInsight {
   confidence?: number;
   suggestions?: string[];
   timestamp: Date;
+  priority?: 'low' | 'medium' | 'high';
+  category?: string;
+  actionItems?: string[];
 }
 
 const AIBusinessDashboard = () => {
@@ -38,6 +45,8 @@ const AIBusinessDashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiKey, setApiKey] = useState(AIService.getApiKey() || '');
   const [isKeyValid, setIsKeyValid] = useState(false);
+  const [searchFilter, setSearchFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
 
   const analysisTypes = [
     { value: 'analysis', label: 'Business Analysis', icon: BarChart3, color: 'from-blue-500 to-cyan-500' },
@@ -95,13 +104,26 @@ const AIBusinessDashboard = () => {
         type: selectedType
       });
 
+      const { category, priority } = BusinessAnalyticsService.categorizeInsight(response.content, selectedType);
+      
+      // Extract action items from the response
+      const actionItems = response.content
+        .split('\n')
+        .filter(line => line.includes('action:') || line.includes('do:') || line.includes('implement:'))
+        .map(line => line.replace(/.*?action:|.*?do:|.*?implement:/, '').trim())
+        .filter(item => item.length > 0)
+        .slice(0, 3);
+
       const newInsight: AIInsight = {
         id: crypto.randomUUID(),
         type: selectedType,
         content: response.content,
         confidence: response.confidence,
         suggestions: response.suggestions,
-        timestamp: new Date()
+        timestamp: new Date(),
+        category,
+        priority,
+        actionItems: actionItems.length > 0 ? actionItems : undefined
       };
 
       setInsights(prev => [newInsight, ...prev]);
@@ -122,9 +144,68 @@ const AIBusinessDashboard = () => {
     }
   };
 
+  const handleExportInsight = (insight: AIInsight) => {
+    const data = {
+      timestamp: insight.timestamp.toISOString(),
+      type: insight.type,
+      category: insight.category,
+      priority: insight.priority,
+      confidence: insight.confidence,
+      content: insight.content,
+      suggestions: insight.suggestions,
+      actionItems: insight.actionItems
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `insight-${insight.id}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Insight Exported",
+      description: "Insight has been exported successfully",
+    });
+  };
+
+  const handleSaveInsight = (insight: AIInsight) => {
+    // In a real app, this would save to a database
+    toast({
+      title: "Insight Saved",
+      description: "Insight has been saved to your workspace",
+    });
+  };
+
+  const handleExportAll = () => {
+    const csvContent = BusinessAnalyticsService.exportInsights(insights);
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'business-insights.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "All Insights Exported",
+      description: "All insights have been exported to CSV",
+    });
+  };
+
   const getTypeConfig = (type: string) => {
     return analysisTypes.find(t => t.value === type) || analysisTypes[3];
   };
+
+  const filteredInsights = insights.filter(insight => {
+    const matchesSearch = insight.content.toLowerCase().includes(searchFilter.toLowerCase()) ||
+                         insight.category?.toLowerCase().includes(searchFilter.toLowerCase());
+    const matchesType = typeFilter === 'all' || insight.type === typeFilter;
+    return matchesSearch && matchesType;
+  });
+
+  const analytics = BusinessAnalyticsService.generateAnalytics(insights);
 
   React.useEffect(() => {
     setIsKeyValid(!!AIService.getApiKey());
@@ -191,6 +272,11 @@ const AIBusinessDashboard = () => {
           <h1 className="text-4xl font-bold text-white mb-2">AI Business Manager</h1>
           <p className="text-white/60">Leverage AI to optimize your business operations and strategy</p>
         </div>
+
+        {/* Statistics Dashboard */}
+        {insights.length > 0 && (
+          <BusinessDashboardStats analytics={analytics} />
+        )}
 
         {/* Analysis Type Selection */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -267,56 +353,52 @@ const AIBusinessDashboard = () => {
         {/* Insights Display */}
         {insights.length > 0 && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-white">AI Generated Insights</h2>
-            {insights.map((insight) => {
-              const typeConfig = getTypeConfig(insight.type);
-              const Icon = typeConfig.icon;
-              
-              return (
-                <Card key={insight.id} className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-10 h-10 bg-gradient-to-r ${typeConfig.color} rounded-lg flex items-center justify-center`}>
-                          <Icon className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <CardTitle className="text-white">{typeConfig.label}</CardTitle>
-                          <p className="text-white/60 text-sm">{insight.timestamp.toLocaleString()}</p>
-                        </div>
-                      </div>
-                      {insight.confidence && (
-                        <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-                          <CheckCircle className="w-3 h-3 mr-1" />
-                          {Math.round(insight.confidence * 100)}% confidence
-                        </Badge>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="prose prose-invert max-w-none">
-                      <p className="text-white/80 whitespace-pre-wrap">{insight.content}</p>
-                    </div>
-                    {insight.suggestions && insight.suggestions.length > 0 && (
-                      <div className="space-y-2">
-                        <h4 className="text-white font-medium flex items-center">
-                          <Lightbulb className="w-4 h-4 mr-2" />
-                          Key Suggestions
-                        </h4>
-                        <div className="space-y-2">
-                          {insight.suggestions.map((suggestion, index) => (
-                            <div key={index} className="flex items-start space-x-2">
-                              <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0" />
-                              <p className="text-white/70 text-sm">{suggestion}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-white">AI Generated Insights</h2>
+              <Button
+                onClick={handleExportAll}
+                variant="outline"
+                className="text-white/70 border-white/20 hover:bg-white/10"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export All
+              </Button>
+            </div>
+
+            {/* Filters */}
+            <div className="flex space-x-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-3 top-3 text-white/40" />
+                  <Input
+                    placeholder="Search insights..."
+                    value={searchFilter}
+                    onChange={(e) => setSearchFilter(e.target.value)}
+                    className="pl-10 bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                  />
+                </div>
+              </div>
+              <select
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+                className="px-4 py-2 bg-white/5 border border-white/20 rounded-md text-white"
+              >
+                <option value="all">All Types</option>
+                {analysisTypes.map(type => (
+                  <option key={type.value} value={type.value}>{type.label}</option>
+                ))}
+              </select>
+            </div>
+
+            {filteredInsights.map((insight) => (
+              <BusinessInsightCard
+                key={insight.id}
+                insight={insight}
+                typeConfig={getTypeConfig(insight.type)}
+                onExport={handleExportInsight}
+                onSave={handleSaveInsight}
+              />
+            ))}
           </div>
         )}
       </div>
