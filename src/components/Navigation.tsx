@@ -1,194 +1,137 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { Menu } from "lucide-react";
 
-import { Brain, Menu, X, LogOut, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
-
-export const Navigation = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, profile, signOut } = useAuth();
-  const { toast } = useToast();
-
-  const isActive = (path: string) => location.pathname === path;
-
-  const handleSignOut = async () => {
-    const { error } = await signOut();
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive"
-      });
-    } else {
-      toast({
-        title: "Signed Out",
-        description: "You have been successfully signed out."
-      });
-      navigate('/');
-    }
-  };
+const Navigation = () => {
+  const { user, signOut } = useAuth();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          <Link to="/" className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-              <Brain className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-light text-white">MarketingAI</span>
-          </Link>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link to="/features">
-              <Button variant="ghost" className={`text-white/80 hover:text-white font-light ${isActive('/features') ? 'text-white bg-white/10' : ''}`}>
-                Features
-              </Button>
-            </Link>
-            <Link to="/ai">
-              <Button variant="ghost" className={`text-white/80 hover:text-white font-light ${isActive('/ai') ? 'text-white bg-white/10' : ''}`}>
-                AI
-              </Button>
-            </Link>
-            <Link to="/pricing">
-              <Button variant="ghost" className={`text-white/80 hover:text-white font-light ${isActive('/pricing') ? 'text-white bg-white/10' : ''}`}>
-                Pricing
-              </Button>
-            </Link>
-            <Link to="/about">
-              <Button variant="ghost" className={`text-white/80 hover:text-white font-light ${isActive('/about') ? 'text-white bg-white/10' : ''}`}>
-                About
-              </Button>
-            </Link>
-            <Link to="/contact">
-              <Button variant="ghost" className={`text-white/80 hover:text-white font-light ${isActive('/contact') ? 'text-white bg-white/10' : ''}`}>
-                Contact
-              </Button>
-            </Link>
-            
-            {user ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-white/60 text-sm">
-                  Welcome, {profile?.first_name || user.email?.split('@')[0]}
-                </span>
-                <Link to="/profile">
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    className={`text-white/80 hover:text-white ${isActive('/profile') ? 'text-white bg-white/10' : ''}`}
-                  >
-                    <User className="w-4 h-4" />
-                  </Button>
-                </Link>
-                <Button 
-                  onClick={handleSignOut}
-                  variant="ghost" 
-                  size="icon"
-                  className="text-white/80 hover:text-white"
-                >
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-4">
-                <Link to="/login">
-                  <Button variant="ghost" className="text-white/80 hover:text-white font-light">
-                    Login
-                  </Button>
-                </Link>
-                <Link to="/signup">
-                  <Button className="bg-white text-black hover:bg-white/90 font-medium rounded-full px-6">
-                    Get Started
-                  </Button>
-                </Link>
-              </div>
-            )}
-          </div>
+    <nav className="bg-black/95 backdrop-blur-md fixed top-0 left-0 w-full z-50 border-b border-white/5">
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        <Link to="/" className="text-2xl font-bold text-white">
+          MarketingAI
+        </Link>
 
-          {/* Mobile menu button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden text-white"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </Button>
+      <div className="hidden md:flex items-center space-x-8">
+        <Link to="/" className="text-white/80 hover:text-white transition-colors">
+          Home
+        </Link>
+        <Link to="/features" className="text-white/80 hover:text-white transition-colors">
+          Features
+        </Link>
+        <Link to="/ai" className="text-white/80 hover:text-white transition-colors">
+          AI Technology
+        </Link>
+        <Link to="/ai-business" className="text-white/80 hover:text-white transition-colors">
+          AI Business Manager
+        </Link>
+        <Link to="/pricing" className="text-white/80 hover:text-white transition-colors">
+          Pricing
+        </Link>
+        <Link to="/about" className="text-white/80 hover:text-white transition-colors">
+          About
+        </Link>
+        <Link to="/contact" className="text-white/80 hover:text-white transition-colors">
+          Contact
+        </Link>
+      </div>
+
+        <div className="hidden md:flex items-center space-x-4">
+          {user ? (
+            <>
+              <Link to="/profile" className="text-white/60 hover:text-white transition-colors">
+                Profile
+              </Link>
+              <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10" onClick={() => signOut()}>
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="text-white/60 hover:text-white transition-colors">
+                Log In
+              </Link>
+              <Link to="/signup">
+                <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10">
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-md border-b border-white/10">
-            <div className="px-4 py-6 space-y-4">
-              <Link to="/features" onClick={() => setIsMenuOpen(false)}>
-                <Button variant="ghost" className="w-full text-white/80 hover:text-white font-light justify-start">
-                  Features
-                </Button>
+        <Sheet>
+          <SheetTrigger className="md:hidden">
+            <Button variant="ghost" size="icon">
+              <Menu className="w-5 h-5 text-white" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="bg-black/95 backdrop-blur-md border-0">
+            <SheetHeader>
+              <SheetTitle>Menu</SheetTitle>
+              <SheetDescription>
+                Navigate through the application.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid gap-4 py-4">
+              <Link to="/" className="text-white/80 hover:text-white transition-colors block py-2">
+                Home
               </Link>
-              <Link to="/ai" onClick={() => setIsMenuOpen(false)}>
-                <Button variant="ghost" className="w-full text-white/80 hover:text-white font-light justify-start">
-                  AI
-                </Button>
+              <Link to="/features" className="text-white/80 hover:text-white transition-colors block py-2">
+                Features
               </Link>
-              <Link to="/pricing" onClick={() => setIsMenuOpen(false)}>
-                <Button variant="ghost" className="w-full text-white/80 hover:text-white font-light justify-start">
-                  Pricing
-                </Button>
+              <Link to="/ai" className="text-white/80 hover:text-white transition-colors block py-2">
+                AI Technology
               </Link>
-              <Link to="/about" onClick={() => setIsMenuOpen(false)}>
-                <Button variant="ghost" className="w-full text-white/80 hover:text-white font-light justify-start">
-                  About
-                </Button>
+              <Link to="/ai-business" className="text-white/80 hover:text-white transition-colors block py-2">
+                AI Business Manager
               </Link>
-              <Link to="/contact" onClick={() => setIsMenuOpen(false)}>
-                <Button variant="ghost" className="w-full text-white/80 hover:text-white font-light justify-start">
-                  Contact
-                </Button>
+              <Link to="/pricing" className="text-white/80 hover:text-white transition-colors block py-2">
+                Pricing
               </Link>
-              
+              <Link to="/about" className="text-white/80 hover:text-white transition-colors block py-2">
+                About
+              </Link>
+              <Link to="/contact" className="text-white/80 hover:text-white transition-colors block py-2">
+                Contact
+              </Link>
               {user ? (
-                <div className="space-y-4 pt-4 border-t border-white/10">
-                  <div className="text-white/60 text-sm">
-                    Welcome, {profile?.first_name || user.email?.split('@')[0]}
-                  </div>
-                  <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full text-white/80 hover:text-white font-light justify-start">
-                      <User className="w-4 h-4 mr-2" />
-                      Profile
-                    </Button>
+                <>
+                  <Link to="/profile" className="text-white/60 hover:text-white transition-colors block py-2">
+                    Profile
                   </Link>
-                  <Button 
-                    onClick={handleSignOut}
-                    variant="ghost" 
-                    className="w-full text-white/80 hover:text-white font-light justify-start"
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
+                  <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10 w-full justify-center" onClick={() => signOut()}>
                     Sign Out
                   </Button>
-                </div>
+                </>
               ) : (
-                <div className="space-y-4 pt-4 border-t border-white/10">
-                  <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full text-white/80 hover:text-white font-light justify-start">
-                      Login
+                <>
+                  <Link to="/login" className="text-white/60 hover:text-white transition-colors block py-2">
+                    Log In
+                  </Link>
+                  <Link to="/signup">
+                    <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10 w-full justify-center">
+                      Sign Up
                     </Button>
                   </Link>
-                  <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="w-full bg-white text-black hover:bg-white/90 font-medium">
-                      Get Started
-                    </Button>
-                  </Link>
-                </div>
+                </>
               )}
             </div>
-          </div>
-        )}
+          </SheetContent>
+        </Sheet>
       </div>
     </nav>
   );
 };
+
+export default Navigation;
