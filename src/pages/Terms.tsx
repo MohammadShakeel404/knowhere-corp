@@ -1,6 +1,7 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Navigation } from "@/components/Navigation";
+import Navigation from "@/components/Navigation";
 import { Link } from "react-router-dom";
 import { Brain, ArrowLeft, Shield, FileText, Users, Globe } from "lucide-react";
 
