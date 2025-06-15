@@ -1,4 +1,5 @@
-import { Brain, Menu, X, LogOut } from "lucide-react";
+
+import { Brain, Menu, X, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -9,7 +10,7 @@ export const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
 
   const isActive = (path: string) => location.pathname === path;
@@ -72,7 +73,18 @@ export const Navigation = () => {
             
             {user ? (
               <div className="flex items-center space-x-4">
-                <span className="text-white/60 text-sm">Welcome, {user.email}</span>
+                <span className="text-white/60 text-sm">
+                  Welcome, {profile?.first_name || user.email?.split('@')[0]}
+                </span>
+                <Link to="/profile">
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className={`text-white/80 hover:text-white ${isActive('/profile') ? 'text-white bg-white/10' : ''}`}
+                  >
+                    <User className="w-4 h-4" />
+                  </Button>
+                </Link>
                 <Button 
                   onClick={handleSignOut}
                   variant="ghost" 
@@ -138,25 +150,24 @@ export const Navigation = () => {
                   Contact
                 </Button>
               </Link>
-              <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                <Button variant="ghost" className="w-full text-white/80 hover:text-white font-light justify-start">
-                  Login
-                </Button>
-              </Link>
-              <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                <Button className="w-full bg-white text-black hover:bg-white/90 font-medium">
-                  Get Started
-                </Button>
-              </Link>
               
               {user ? (
                 <div className="space-y-4 pt-4 border-t border-white/10">
-                  <div className="text-white/60 text-sm">Welcome, {user.email}</div>
+                  <div className="text-white/60 text-sm">
+                    Welcome, {profile?.first_name || user.email?.split('@')[0]}
+                  </div>
+                  <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full text-white/80 hover:text-white font-light justify-start">
+                      <User className="w-4 h-4 mr-2" />
+                      Profile
+                    </Button>
+                  </Link>
                   <Button 
                     onClick={handleSignOut}
                     variant="ghost" 
                     className="w-full text-white/80 hover:text-white font-light justify-start"
                   >
+                    <LogOut className="w-4 h-4 mr-2" />
                     Sign Out
                   </Button>
                 </div>

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Brain, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Brain, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -16,29 +16,66 @@ const Login = () => {
     email: "",
     password: ""
   });
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { signIn, user } = useAuth();
+  const { signIn, user, loading } = useAuth();
   const navigate = useNavigate();
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user) {
+    if (!loading && user) {
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
+
+  const validateForm = () => {
+    const newErrors: { email?: string; password?: string } = {};
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       const { error } = await signIn(formData.email, formData.password);
       
       if (error) {
+        let errorMessage = "An error occurred during login";
+        
+        if (error.message.includes("Invalid login credentials")) {
+          errorMessage = "Invalid email or password. Please check your credentials and try again.";
+        } else if (error.message.includes("Email not confirmed")) {
+          errorMessage = "Please check your email and click the confirmation link before signing in.";
+        } else if (error.message.includes("Too many requests")) {
+          errorMessage = "Too many login attempts. Please wait a few minutes and try again.";
+        } else {
+          errorMessage = error.message;
+        }
+
         toast({
           title: "Login Failed",
-          description: error.message,
+          description: errorMessage,
           variant: "destructive"
         });
       } else {
@@ -61,7 +98,19 @@ const Login = () => {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (errors[field as keyof typeof errors]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black overflow-hidden">
@@ -92,9 +141,17 @@ const Login = () => {
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     required
-                    className="bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300"
+                    className={`bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300 ${
+                      errors.email ? 'border-red-500 focus:border-red-500' : ''
+                    }`}
                     placeholder="Enter your email"
                   />
+                  {errors.email && (
+                    <div className="flex items-center mt-2 text-red-400 text-sm">
+                      <AlertCircle className="w-4 h-4 mr-1" />
+                      {errors.email}
+                    </div>
+                  )}
                 </div>
               </div>
               
@@ -108,7 +165,9 @@ const Login = () => {
                     value={formData.password}
                     onChange={(e) => handleInputChange("password", e.target.value)}
                     required
-                    className="bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 pr-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300"
+                    className={`bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 pr-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300 ${
+                      errors.password ? 'border-red-500 focus:border-red-500' : ''
+                    }`}
                     placeholder="Enter your password"
                   />
                   <button
@@ -118,6 +177,12 @@ const Login = () => {
                   >
                     {showPassword ? <EyeOff /> : <Eye />}
                   </button>
+                  {errors.password && (
+                    <div className="flex items-center mt-2 text-red-400 text-sm">
+                      <AlertCircle className="w-4 h-4 mr-1" />
+                      {errors.password}
+                    </div>
+                  )}
                 </div>
               </div>
               

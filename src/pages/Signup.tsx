@@ -7,11 +7,21 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Brain, Mail, Lock, Eye, EyeOff, User, Building } from "lucide-react";
+import { Brain, Mail, Lock, Eye, EyeOff, User, Building, AlertCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+
+interface FormErrors {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
+  company?: string;
+  businessType?: string;
+  agreeToTerms?: string;
+}
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,25 +34,67 @@ const Signup = () => {
     businessType: "",
     agreeToTerms: false
   });
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { signUp, user } = useAuth();
+  const { signUp, user, loading } = useAuth();
   const navigate = useNavigate();
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user) {
+    if (!loading && user) {
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required";
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required";
+    }
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      newErrors.password = "Password must contain at least one uppercase letter, one lowercase letter, and one number";
+    }
+
+    if (!formData.company.trim()) {
+      newErrors.company = "Company name is required";
+    }
+
+    if (!formData.businessType) {
+      newErrors.businessType = "Please select a business type";
+    }
+
+    if (!formData.agreeToTerms) {
+      newErrors.agreeToTerms = "You must agree to the terms and conditions";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.agreeToTerms) {
+    if (!validateForm()) {
       toast({
-        title: "Terms Required",
-        description: "Please agree to the terms and conditions to continue.",
+        title: "Please Fix Errors",
+        description: "Please correct the errors in the form before submitting.",
         variant: "destructive"
       });
       return;
@@ -59,17 +111,38 @@ const Signup = () => {
       });
 
       if (error) {
+        let errorMessage = "An error occurred during signup";
+        
+        if (error.message.includes("User already registered")) {
+          errorMessage = "An account with this email already exists. Please try logging in instead.";
+        } else if (error.message.includes("Password should be at least")) {
+          errorMessage = "Password is too weak. Please choose a stronger password.";
+        } else if (error.message.includes("Unable to validate email address")) {
+          errorMessage = "Please enter a valid email address.";
+        } else {
+          errorMessage = error.message;
+        }
+
         toast({
           title: "Signup Failed",
-          description: error.message,
+          description: errorMessage,
           variant: "destructive"
         });
       } else {
         toast({
           title: "Account Created!",
-          description: "Please check your email to verify your account."
+          description: "Please check your email to verify your account before signing in."
         });
-        // Don't redirect immediately, let them verify email first
+        // Clear form
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
+          company: "",
+          businessType: "",
+          agreeToTerms: false
+        });
       }
     } catch (err) {
       toast({
@@ -84,7 +157,19 @@ const Signup = () => {
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (errors[field as keyof FormErrors]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black overflow-hidden">
@@ -104,110 +189,158 @@ const Signup = () => {
           </div>
 
           <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-xl">
-            <div className="space-y-8">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-3">
-                    <Label htmlFor="firstName" className="text-white/80 font-light text-sm">First Name</Label>
-                    <div className="relative">
-                      <User className="absolute left-4 top-4 h-5 w-5 text-white/40" />
-                      <Input
-                        id="firstName"
-                        value={formData.firstName}
-                        onChange={(e) => handleInputChange("firstName", e.target.value)}
-                        required
-                        className="bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300"
-                        placeholder="John"
-                      />
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <Label htmlFor="firstName" className="text-white/80 font-light text-sm">First Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-4 top-4 h-5 w-5 text-white/40" />
+                    <Input
+                      id="firstName"
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange("firstName", e.target.value)}
+                      required
+                      className={`bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300 ${
+                        errors.firstName ? 'border-red-500 focus:border-red-500' : ''
+                      }`}
+                      placeholder="John"
+                    />
+                    {errors.firstName && (
+                      <div className="flex items-center mt-1 text-red-400 text-xs">
+                        <AlertCircle className="w-3 h-3 mr-1" />
+                        {errors.firstName}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <Label htmlFor="lastName" className="text-white/80 font-light text-sm">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    value={formData.lastName}
+                    onChange={(e) => handleInputChange("lastName", e.target.value)}
+                    required
+                    className={`bg-white/5 border-white/10 text-white placeholder-white/40 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300 ${
+                      errors.lastName ? 'border-red-500 focus:border-red-500' : ''
+                    }`}
+                    placeholder="Doe"
+                  />
+                  {errors.lastName && (
+                    <div className="flex items-center mt-1 text-red-400 text-xs">
+                      <AlertCircle className="w-3 h-3 mr-1" />
+                      {errors.lastName}
                     </div>
-                  </div>
-                  <div className="space-y-3">
-                    <Label htmlFor="lastName" className="text-white/80 font-light text-sm">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      value={formData.lastName}
-                      onChange={(e) => handleInputChange("lastName", e.target.value)}
-                      required
-                      className="bg-white/5 border-white/10 text-white placeholder-white/40 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300"
-                      placeholder="Doe"
-                    />
-                  </div>
+                  )}
                 </div>
-                
-                <div className="space-y-3">
-                  <Label htmlFor="email" className="text-white/80 font-light text-sm">Work Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-4 h-5 w-5 text-white/40" />
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
-                      required
-                      className="bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300"
-                      placeholder="john@company.com"
-                    />
+              </div>
+              
+              <div className="space-y-3">
+                <Label htmlFor="email" className="text-white/80 font-light text-sm">Work Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-4 h-5 w-5 text-white/40" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    required
+                    className={`bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300 ${
+                      errors.email ? 'border-red-500 focus:border-red-500' : ''
+                    }`}
+                    placeholder="john@company.com"
+                  />
+                  {errors.email && (
+                    <div className="flex items-center mt-2 text-red-400 text-sm">
+                      <AlertCircle className="w-4 h-4 mr-1" />
+                      {errors.email}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <Label htmlFor="password" className="text-white/80 font-light text-sm">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-4 h-5 w-5 text-white/40" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    required
+                    className={`bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 pr-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300 ${
+                      errors.password ? 'border-red-500 focus:border-red-500' : ''
+                    }`}
+                    placeholder="Create a strong password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-4 h-5 w-5 text-white/40 hover:text-white transition-colors duration-300"
+                  >
+                    {showPassword ? <EyeOff /> : <Eye />}
+                  </button>
+                  {errors.password && (
+                    <div className="flex items-center mt-2 text-red-400 text-sm">
+                      <AlertCircle className="w-4 h-4 mr-1" />
+                      {errors.password}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <Label htmlFor="company" className="text-white/80 font-light text-sm">Company Name</Label>
+                <div className="relative">
+                  <Building className="absolute left-4 top-4 h-5 w-5 text-white/40" />
+                  <Input
+                    id="company"
+                    value={formData.company}
+                    onChange={(e) => handleInputChange("company", e.target.value)}
+                    required
+                    className={`bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300 ${
+                      errors.company ? 'border-red-500 focus:border-red-500' : ''
+                    }`}
+                    placeholder="Your company name"
+                  />
+                  {errors.company && (
+                    <div className="flex items-center mt-2 text-red-400 text-sm">
+                      <AlertCircle className="w-4 h-4 mr-1" />
+                      {errors.company}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <Label htmlFor="businessType" className="text-white/80 font-light text-sm">Business Type</Label>
+                <Select onValueChange={(value) => handleInputChange("businessType", value)}>
+                  <SelectTrigger className={`bg-white/5 border-white/10 text-white h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 ${
+                    errors.businessType ? 'border-red-500' : ''
+                  }`}>
+                    <SelectValue placeholder="Select your business type" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-black/95 border-white/10 backdrop-blur-xl">
+                    <SelectItem value="ecommerce">E-commerce</SelectItem>
+                    <SelectItem value="saas">SaaS</SelectItem>
+                    <SelectItem value="agency">Agency</SelectItem>
+                    <SelectItem value="consulting">Consulting</SelectItem>
+                    <SelectItem value="retail">Retail</SelectItem>
+                    <SelectItem value="restaurant">Restaurant</SelectItem>
+                    <SelectItem value="healthcare">Healthcare</SelectItem>
+                    <SelectItem value="education">Education</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.businessType && (
+                  <div className="flex items-center mt-2 text-red-400 text-sm">
+                    <AlertCircle className="w-4 h-4 mr-1" />
+                    {errors.businessType}
                   </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <Label htmlFor="password" className="text-white/80 font-light text-sm">Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-4 h-5 w-5 text-white/40" />
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      value={formData.password}
-                      onChange={(e) => handleInputChange("password", e.target.value)}
-                      required
-                      className="bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 pr-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300"
-                      placeholder="Create a strong password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-4 h-5 w-5 text-white/40 hover:text-white transition-colors duration-300"
-                    >
-                      {showPassword ? <EyeOff /> : <Eye />}
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <Label htmlFor="company" className="text-white/80 font-light text-sm">Company Name</Label>
-                  <div className="relative">
-                    <Building className="absolute left-4 top-4 h-5 w-5 text-white/40" />
-                    <Input
-                      id="company"
-                      value={formData.company}
-                      onChange={(e) => handleInputChange("company", e.target.value)}
-                      required
-                      className="bg-white/5 border-white/10 text-white placeholder-white/40 pl-12 h-14 rounded-2xl focus:border-white/30 focus:bg-white/10 transition-all duration-300"
-                      placeholder="Your company name"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <Label htmlFor="businessType" className="text-white/80 font-light text-sm">Business Type</Label>
-                  <Select onValueChange={(value) => handleInputChange("businessType", value)}>
-                    <SelectTrigger className="bg-white/5 border-white/10 text-white h-14 rounded-2xl focus:border-white/30 focus:bg-white/10">
-                      <SelectValue placeholder="Select your business type" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-black/95 border-white/10 backdrop-blur-xl">
-                      <SelectItem value="ecommerce">E-commerce</SelectItem>
-                      <SelectItem value="saas">SaaS</SelectItem>
-                      <SelectItem value="agency">Agency</SelectItem>
-                      <SelectItem value="consulting">Consulting</SelectItem>
-                      <SelectItem value="retail">Retail</SelectItem>
-                      <SelectItem value="restaurant">Restaurant</SelectItem>
-                      <SelectItem value="healthcare">Healthcare</SelectItem>
-                      <SelectItem value="education">Education</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
+                )}
+              </div>
+              
+              <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <Checkbox 
                     id="terms" 
@@ -222,49 +355,55 @@ const Signup = () => {
                     <Link to="/privacy" className="text-white hover:text-white/80 transition-colors duration-300">Privacy Policy</Link>
                   </Label>
                 </div>
-                
-                <Button 
-                  type="submit" 
-                  disabled={isLoading}
-                  className="w-full bg-white text-black hover:bg-white/90 h-14 rounded-2xl text-lg font-medium transition-all duration-300 hover:scale-[1.02] disabled:opacity-50"
-                >
-                  {isLoading ? "Creating Account..." : "Start Free Trial"}
-                </Button>
-              </form>
-              
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <Separator className="w-full bg-white/10" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-black px-4 text-white/40 font-light">Or sign up with</span>
-                </div>
+                {errors.agreeToTerms && (
+                  <div className="flex items-center text-red-400 text-sm">
+                    <AlertCircle className="w-4 h-4 mr-1" />
+                    {errors.agreeToTerms}
+                  </div>
+                )}
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" className="border-white/10 text-white hover:bg-white/5 h-12 rounded-2xl font-light">
-                  <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                  </svg>
-                  Google
-                </Button>
-                <Button variant="outline" className="border-white/10 text-white hover:bg-white/5 h-12 rounded-2xl font-light">
-                  <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M13.397 20.997v-8.196h2.765l.411-3.209h-3.176V7.548c0-.926.258-1.56 1.587-1.56h1.684V3.127A22.336 22.336 0 0 0 14.201 3c-2.444 0-4.122 1.492-4.122 4.231v2.355H7.332v3.209h2.753v8.202h3.312z"/>
-                  </svg>
-                  Facebook
-                </Button>
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full bg-white text-black hover:bg-white/90 h-14 rounded-2xl text-lg font-medium transition-all duration-300 hover:scale-[1.02] disabled:opacity-50"
+              >
+                {isLoading ? "Creating Account..." : "Start Free Trial"}
+              </Button>
+            </form>
+            
+            <div className="relative mt-8">
+              <div className="absolute inset-0 flex items-center">
+                <Separator className="w-full bg-white/10" />
               </div>
-              
-              <div className="text-center text-sm text-white/60">
-                Already have an account?{" "}
-                <Link to="/login" className="text-white hover:text-white/80 font-light transition-colors duration-300">
-                  Sign in here
-                </Link>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-black px-4 text-white/40 font-light">Or sign up with</span>
               </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 mt-6">
+              <Button variant="outline" className="border-white/10 text-white hover:bg-white/5 h-12 rounded-2xl font-light">
+                <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Google
+              </Button>
+              <Button variant="outline" className="border-white/10 text-white hover:bg-white/5 h-12 rounded-2xl font-light">
+                <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M13.397 20.997v-8.196h2.765l.411-3.209h-3.176V7.548c0-.926.258-1.56 1.587-1.56h1.684V3.127A22.336 22.336 0 0 0 14.201 3c-2.444 0-4.122 1.492-4.122 4.231v2.355H7.332v3.209h2.753v8.202h3.312z"/>
+                </svg>
+                Facebook
+              </Button>
+            </div>
+            
+            <div className="text-center text-sm text-white/60 mt-6">
+              Already have an account?{" "}
+              <Link to="/login" className="text-white hover:text-white/80 font-light transition-colors duration-300">
+                Sign in here
+              </Link>
             </div>
           </div>
           
