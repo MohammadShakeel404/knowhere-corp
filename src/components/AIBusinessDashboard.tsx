@@ -249,7 +249,7 @@ const AIBusinessDashboard: React.FC = () => {
   // Show login message if not authenticated
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center p-4 sm:p-6">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center p-4 sm:p-6 pt-20 sm:pt-24">
         <div className="w-full max-w-lg">
           <Card className="shadow-2xl border-0 bg-white rounded-[2rem] overflow-hidden backdrop-blur-xl">
             <CardContent className="p-8 sm:p-12 text-center">
@@ -275,7 +275,7 @@ const AIBusinessDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 pt-20 sm:pt-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl">
         {/* Header - Improved spacing and alignment */}
         <div className="mb-8 sm:mb-12">
