@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, ArrowRight, Play } from "lucide-react";
@@ -61,15 +60,36 @@ export const HeroSection = () => {
             </Button>
           </div>
           
-          {/* Animation */}
-          <div className="flex justify-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-3xl blur-2xl"></div>
+          {/* Enhanced Animation Section */}
+          <div className="flex justify-center relative">
+            {/* Floating particles */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-1/4 left-1/3 w-2 h-2 bg-purple-400/60 rounded-full animate-pulse delay-300"></div>
+              <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-blue-400/40 rounded-full animate-bounce delay-700"></div>
+              <div className="absolute bottom-1/3 left-1/4 w-1.5 h-1.5 bg-pink-400/50 rounded-full animate-pulse delay-1000"></div>
+              <div className="absolute bottom-1/4 right-1/3 w-1 h-1 bg-cyan-400/60 rounded-full animate-bounce delay-500"></div>
+            </div>
+            
+            {/* Main animation container */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-3xl blur-2xl group-hover:from-purple-500/30 group-hover:to-blue-500/30 transition-all duration-700"></div>
+              
+              {/* Orbiting elements */}
+              <div className="absolute inset-0 animate-spin" style={{ animationDuration: '20s' }}>
+                <div className="absolute -top-4 left-1/2 w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full transform -translate-x-1/2"></div>
+                <div className="absolute top-1/2 -right-4 w-1.5 h-1.5 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full transform -translate-y-1/2"></div>
+                <div className="absolute -bottom-4 left-1/2 w-2 h-2 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full transform -translate-x-1/2"></div>
+                <div className="absolute top-1/2 -left-4 w-1.5 h-1.5 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full transform -translate-y-1/2"></div>
+              </div>
+              
               <LottiePlayer
                 animationData={mockAnimation as any}
-                className="relative w-[280px] md:w-[400px] h-[280px] md:h-[400px] opacity-90"
+                className="relative w-[280px] md:w-[400px] h-[280px] md:h-[400px] opacity-90 group-hover:scale-105 transition-transform duration-500"
                 ariaLabel="AI Marketing Animation"
               />
+              
+              {/* Subtle glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/5 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             </div>
           </div>
         </div>

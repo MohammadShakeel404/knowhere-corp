@@ -1,10 +1,10 @@
 
-import { Navigation } from "@/components/Navigation";
-import { ServiceCard } from "@/components/ServiceCard";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Palette, Share2, Megaphone, Code, Image, TrendingUp, Sparkles, CheckCircle, ArrowRight, Brain } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Sparkles, Palette, Share2, Megaphone, Code, Image, TrendingUp, Brain, ArrowRight } from "lucide-react";
+import { ServiceCard } from "@/components/ServiceCard";
+import { Navigation } from "@/components/Navigation";
 import { Link } from "react-router-dom";
 
 const Features = () => {
@@ -53,112 +53,78 @@ const Features = () => {
     }
   ];
 
-  const keyFeatures = [
-    "One-click brand creation from business description",
-    "Automated social media content generation and posting",
-    "AI-powered ad copy and visual creation",
-    "Full website development with source code",
-    "SEO optimization and analytics",
-    "Multi-platform integration and management",
-    "Real-time performance tracking",
-    "24/7 AI-powered customer support"
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-black">
       <Navigation />
-      
+
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-black">
         <div className="max-w-7xl mx-auto text-center">
-          <Badge className="mb-4 bg-purple-500/20 text-purple-300 border-purple-500/30">
-            <Sparkles className="w-4 h-4 mr-1" />
-            Complete Feature Suite
+          <Badge className="mb-6 bg-white/10 text-white border-white/20 backdrop-blur-md px-6 py-2">
+            <Sparkles className="w-4 h-4 mr-2" />
+            Comprehensive Features
           </Badge>
-          <h1 className="text-5xl font-bold text-white mb-6">
-            Everything You Need for <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">Digital Marketing Success</span>
+          <h1 className="text-5xl md:text-6xl font-light text-white mb-6">
+            Everything You Need to
+            <span className="block bg-gradient-to-r from-purple-400 to-blue-400 text-transparent bg-clip-text">
+              Scale Your Business
+            </span>
           </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-10">
-            Our AI-powered platform provides comprehensive digital marketing solutions that work together seamlessly to grow your business.
+          <p className="text-xl text-white/60 max-w-3xl mx-auto font-light">
+            From brand creation to advanced analytics, our AI-powered platform provides 
+            all the tools you need to build and grow your digital presence.
           </p>
         </div>
       </section>
 
-      {/* Services Grid */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      {/* Features Grid */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <ServiceCard key={index} service={service} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Key Features */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-purple-900/20 to-pink-900/20">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-6">Key Platform Features</h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Discover what makes our AI marketing platform the most comprehensive solution available.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {keyFeatures.map((feature, index) => (
-              <div key={index} className="flex items-center space-x-3 bg-white/5 rounded-lg p-4 backdrop-blur-sm border border-white/10">
-                <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0" />
-                <span className="text-white text-lg">{feature}</span>
-              </div>
+              <ServiceCard key={index} service={service} index={index} />
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-neutral-900 to-black">
         <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-4xl font-bold text-white mb-6">
-            Ready to Experience All Features?
+          <h3 className="text-4xl md:text-5xl font-light text-white mb-8">
+            Ready to Get Started?
           </h3>
-          <p className="text-xl text-gray-300 mb-10">
-            Start your free trial today and see how our AI can transform your marketing efforts.
+          <p className="text-xl text-white/60 mb-12 font-light">
+            Join thousands of businesses already using AI to transform their marketing
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/signup">
-              <Button size="lg" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-lg px-8 py-4">
-                Start Free Trial
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </Link>
-            <Link to="/pricing">
-              <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/5 text-lg px-8 py-4">
-                View Pricing
-              </Button>
-            </Link>
-          </div>
+          <Link to="/signup">
+            <Button size="lg" className="bg-white text-black hover:bg-white/90 font-medium px-12 py-4 rounded-full text-lg transition-all duration-300 hover:scale-105">
+              Start Free Trial
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+          </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="border-t border-white/10 py-16 px-4 sm:px-6 lg:px-8 bg-black">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+            <div className="flex items-center space-x-3 mb-8 md:mb-0">
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <Brain className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">MarketingAI</span>
+              <span className="text-xl font-light text-white">MarketingAI</span>
             </div>
-            <div className="flex space-x-6 text-gray-400">
-              <Link to="/about" className="hover:text-white transition-colors">About</Link>
-              <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
-              <a href="#" className="hover:text-white transition-colors">Privacy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <div className="flex space-x-8 text-white/60">
+              <Link to="/about" className="hover:text-white transition-colors font-light">About</Link>
+              <Link to="/contact" className="hover:text-white transition-colors font-light">Contact</Link>
+              <a href="#" className="hover:text-white transition-colors font-light">Privacy</a>
+              <a href="#" className="hover:text-white transition-colors font-light">Terms</a>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-white/10 text-center text-gray-400">
-            <p>&copy; 2024 MarketingAI. All rights reserved. Transforming businesses with AI-powered marketing.</p>
+          <div className="mt-12 pt-8 border-t border-white/10 text-center text-white/40">
+            <p className="font-light">&copy; 2024 MarketingAI. All rights reserved.</p>
           </div>
         </div>
       </footer>
