@@ -1,20 +1,21 @@
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
-  Lightbulb, 
-  CheckCircle, 
+  Save, 
   Download, 
-  Share2, 
-  Bookmark,
+  Trash2, 
+  Clock, 
   TrendingUp,
+  CheckCircle,
   AlertTriangle,
-  Clock,
-  Trash2,
+  Minus,
   ChevronDown,
-  ChevronUp
+  ChevronRight,
+  CheckSquare,
+  Square
 } from 'lucide-react';
 
 interface AIInsight {
@@ -29,201 +30,252 @@ interface AIInsight {
   actionItems?: string[];
 }
 
+interface TypeConfig {
+  value: string;
+  label: string;
+  icon: React.ElementType;
+  color: string;
+}
+
 interface BusinessInsightCardProps {
   insight: AIInsight;
-  typeConfig: any;
-  onExport: (insight: AIInsight) => void;
-  onSave: (insight: AIInsight) => void;
+  typeConfig: TypeConfig;
+  onSave?: (insight: AIInsight) => void;
+  onExport?: (insight: AIInsight) => void;
   onDelete?: (insight: AIInsight) => void;
+  isSelected?: boolean;
+  onSelectionChange?: (selected: boolean) => void;
 }
 
 const BusinessInsightCard: React.FC<BusinessInsightCardProps> = ({
   insight,
   typeConfig,
-  onExport,
   onSave,
-  onDelete
+  onExport,
+  onDelete,
+  isSelected = false,
+  onSelectionChange
 }) => {
-  const [isExpanded, setIsExpanded] = React.useState(false);
-  const Icon = typeConfig.icon;
-  
-  const getPriorityColor = (priority?: string) => {
-    switch (priority) {
-      case 'high': return 'bg-red-50 text-red-700 border-red-200';
-      case 'medium': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
-      case 'low': return 'bg-green-50 text-green-700 border-green-200';
-      default: return 'bg-blue-50 text-blue-700 border-blue-200';
-    }
-  };
+  const [isExpanded, setIsExpanded] = useState(false);
+  const IconComponent = typeConfig.icon;
 
   const getPriorityIcon = (priority?: string) => {
     switch (priority) {
-      case 'high': return AlertTriangle;
-      case 'medium': return TrendingUp;
-      case 'low': return CheckCircle;
-      default: return CheckCircle;
+      case 'high':
+        return <AlertTriangle className="w-4 h-4 text-red-500" />;
+      case 'medium':
+        return <Minus className="w-4 h-4 text-yellow-500" />;
+      case 'low':
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      default:
+        return <Minus className="w-4 h-4 text-gray-400" />;
     }
   };
 
-  const PriorityIcon = getPriorityIcon(insight.priority);
+  const getPriorityColor = (priority?: string) => {
+    switch (priority) {
+      case 'high':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'low':
+        return 'bg-green-100 text-green-800 border-green-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
 
-  const shouldTruncateContent = insight.content.length > 200;
-  const displayContent = shouldTruncateContent && !isExpanded 
-    ? insight.content.substring(0, 200) + '...' 
-    : insight.content;
+  const formatTimestamp = (timestamp: Date) => {
+    const now = new Date();
+    const diff = now.getTime() - timestamp.getTime();
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (minutes < 60) {
+      return `${minutes}m ago`;
+    } else if (hours < 24) {
+      return `${hours}h ago`;
+    } else {
+      return `${days}d ago`;
+    }
+  };
+
+  const truncateContent = (content: string, maxLength: number = 200) => {
+    if (content.length <= maxLength) return content;
+    return content.substring(0, maxLength) + '...';
+  };
 
   return (
-    <Card className="shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-      <CardHeader className="pb-3">
-        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
-          <div className="flex items-center space-x-3 min-w-0 flex-1">
-            <div className={`w-12 h-12 bg-gradient-to-r ${typeConfig.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg`}>
-              <Icon className="w-6 h-6 text-white" />
+    <Card className={`group hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden ${
+      isSelected ? 'ring-2 ring-gray-900 shadow-lg' : ''
+    }`}>
+      <CardHeader className="pb-4">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center space-x-3">
+            {onSelectionChange && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onSelectionChange(!isSelected)}
+                className="p-1 h-auto"
+              >
+                {isSelected ? (
+                  <CheckSquare className="w-4 h-4 text-gray-900" />
+                ) : (
+                  <Square className="w-4 h-4 text-gray-400" />
+                )}
+              </Button>
+            )}
+            
+            <div className={`w-10 h-10 bg-gradient-to-r ${typeConfig.color} rounded-xl flex items-center justify-center shadow-md`}>
+              <IconComponent className="w-5 h-5 text-white" />
             </div>
-            <div className="min-w-0 flex-1">
-              <CardTitle className="text-base text-gray-800 font-bold">{typeConfig.label} Insight</CardTitle>
-              <p className="text-gray-500 text-sm flex items-center mt-1">
+            
+            <div className="flex-1">
+              <div className="flex items-center space-x-2 mb-1">
+                <Badge variant="secondary" className="text-xs px-2 py-1 rounded-lg">
+                  {typeConfig.label}
+                </Badge>
+                {insight.category && (
+                  <Badge variant="outline" className="text-xs px-2 py-1 rounded-lg">
+                    {insight.category}
+                  </Badge>
+                )}
+                {insight.priority && (
+                  <Badge 
+                    variant="outline" 
+                    className={`text-xs px-2 py-1 rounded-lg border ${getPriorityColor(insight.priority)}`}
+                  >
+                    <span className="flex items-center">
+                      {getPriorityIcon(insight.priority)}
+                      <span className="ml-1 capitalize">{insight.priority}</span>
+                    </span>
+                  </Badge>
+                )}
+              </div>
+              
+              <div className="flex items-center text-sm text-gray-500">
                 <Clock className="w-3 h-3 mr-1" />
-                {insight.timestamp.toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'short', 
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
-              </p>
+                <span>{formatTimestamp(insight.timestamp)}</span>
+                {insight.confidence && (
+                  <>
+                    <TrendingUp className="w-3 h-3 ml-3 mr-1" />
+                    <span>{Math.round(insight.confidence * 100)}% confidence</span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {insight.category && (
-              <Badge className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-200 text-xs px-2 py-1 font-medium">
-                {insight.category}
-              </Badge>
-            )}
-            {insight.priority && (
-              <Badge className={`${getPriorityColor(insight.priority)} text-xs px-2 py-1 font-medium border`}>
-                <PriorityIcon className="w-3 h-3 mr-1" />
-                {insight.priority.toUpperCase()}
-              </Badge>
-            )}
-            {insight.confidence && (
-              <Badge className="bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border-green-200 text-xs px-2 py-1 font-medium">
-                {Math.round(insight.confidence * 100)}% confidence
-              </Badge>
-            )}
-          </div>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="space-y-4">
-        <div className="relative">
-          <div className="text-gray-700 leading-relaxed bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-xl border border-gray-200">
-            {displayContent}
-          </div>
-          {shouldTruncateContent && (
+
+          <div className="flex items-center space-x-1">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 p-0 h-auto"
+              className="p-2 h-auto text-gray-400 hover:text-gray-600"
             >
               {isExpanded ? (
-                <>
-                  Show less <ChevronUp className="w-4 h-4 ml-1" />
-                </>
+                <ChevronDown className="w-4 h-4" />
               ) : (
-                <>
-                  Read more <ChevronDown className="w-4 h-4 ml-1" />
-                </>
+                <ChevronRight className="w-4 h-4" />
               )}
             </Button>
-          )}
+          </div>
         </div>
+      </CardHeader>
 
-        {insight.actionItems && insight.actionItems.length > 0 && (
-          <div className="space-y-2">
-            <h4 className="text-gray-800 font-bold text-sm flex items-center">
-              <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-              Action Items
-            </h4>
-            <div className="space-y-2 max-h-32 overflow-y-auto">
-              {insight.actionItems.slice(0, 3).map((item, index) => (
-                <div key={index} className="flex items-start space-x-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
-                  <p className="text-green-800 text-sm font-medium">{item}</p>
+      <CardContent className="pt-0">
+        <div className="space-y-4">
+          <div>
+            <p className="text-gray-700 leading-relaxed">
+              {isExpanded ? insight.content : truncateContent(insight.content)}
+            </p>
+          </div>
+
+          {isExpanded && (
+            <div className="space-y-4 pt-4 border-t border-gray-100">
+              {insight.suggestions && insight.suggestions.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-2 text-sm">Suggestions:</h4>
+                  <ul className="space-y-1">
+                    {insight.suggestions.map((suggestion, index) => (
+                      <li key={index} className="text-sm text-gray-600 flex items-start">
+                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                        <span>{suggestion}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              ))}
-              {insight.actionItems.length > 3 && (
-                <p className="text-sm text-gray-500 ml-5">
-                  +{insight.actionItems.length - 3} more action items
-                </p>
+              )}
+
+              {insight.actionItems && insight.actionItems.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-2 text-sm">Action Items:</h4>
+                  <ul className="space-y-1">
+                    {insight.actionItems.map((item, index) => (
+                      <li key={index} className="text-sm text-gray-600 flex items-start">
+                        <CheckCircle className="w-3 h-3 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
-          </div>
-        )}
+          )}
 
-        {insight.suggestions && insight.suggestions.length > 0 && (
-          <div className="space-y-2">
-            <h4 className="text-gray-800 font-bold text-sm flex items-center">
-              <Lightbulb className="w-4 h-4 mr-2 text-yellow-600" />
-              Strategic Suggestions
-            </h4>
-            <div className="space-y-2 max-h-32 overflow-y-auto">
-              {insight.suggestions.slice(0, 2).map((suggestion, index) => (
-                <div key={index} className="flex items-start space-x-3 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0" />
-                  <p className="text-yellow-800 text-sm font-medium">{suggestion}</p>
-                </div>
-              ))}
-              {insight.suggestions.length > 2 && (
-                <p className="text-sm text-gray-500 ml-5">
-                  +{insight.suggestions.length - 2} more suggestions
-                </p>
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+            <div className="flex items-center space-x-2">
+              {!isExpanded && insight.content.length > 200 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsExpanded(true)}
+                  className="text-xs h-7 px-3 rounded-lg text-gray-600 hover:text-gray-900"
+                >
+                  Read More
+                </Button>
               )}
             </div>
-          </div>
-        )}
 
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-gray-200">
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onSave(insight)}
-              className="border-purple-200 text-purple-600 hover:bg-purple-50 h-9 px-3 text-sm font-medium"
-            >
-              <Bookmark className="w-4 h-4 mr-2" />
-              Saved
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onExport(insight)}
-              className="border-indigo-200 text-indigo-600 hover:bg-indigo-50 h-9 px-3 text-sm font-medium"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-          </div>
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-gray-200 text-gray-600 hover:bg-gray-50 h-9 px-3 text-sm font-medium"
-            >
-              <Share2 className="w-4 h-4 mr-2" />
-              Share
-            </Button>
-            {onDelete && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onDelete(insight)}
-                className="border-red-200 text-red-600 hover:bg-red-50 h-9 px-3 text-sm font-medium"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            )}
+            <div className="flex items-center space-x-2">
+              {onSave && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onSave(insight)}
+                  className="h-8 px-3 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                >
+                  <Save className="w-3 h-3 mr-1" />
+                  <span className="text-xs">Save</span>
+                </Button>
+              )}
+              
+              {onExport && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onExport(insight)}
+                  className="h-8 px-3 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                >
+                  <Download className="w-3 h-3 mr-1" />
+                  <span className="text-xs">Export</span>
+                </Button>
+              )}
+              
+              {onDelete && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onDelete(insight)}
+                  className="h-8 px-3 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="w-3 h-3 mr-1" />
+                  <span className="text-xs">Delete</span>
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>
