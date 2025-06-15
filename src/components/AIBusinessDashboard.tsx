@@ -14,7 +14,7 @@ import {
   RefreshCw,
   Plus,
   Sparkles,
-  Template,
+  FileTemplate,
   Info
 } from 'lucide-react';
 import { SupabaseAIService } from '@/services/SupabaseAIService';
@@ -433,7 +433,7 @@ const AIBusinessDashboard: React.FC = () => {
                         variant="outline"
                         className="rounded-xl"
                       >
-                        <Template className="w-4 h-4 mr-2" />
+                        <FileTemplate className="w-4 h-4 mr-2" />
                         Custom Insight Instead
                       </Button>
                     </div>
@@ -447,7 +447,7 @@ const AIBusinessDashboard: React.FC = () => {
                           variant="outline"
                           className="rounded-xl mb-6"
                         >
-                          <Template className="w-4 h-4 mr-2" />
+                          <FileTemplate className="w-4 h-4 mr-2" />
                           Use Templates
                         </Button>
                       </div>
