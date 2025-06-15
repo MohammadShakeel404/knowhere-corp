@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { BarChart3, TrendingUp, Brain, Zap, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { BarChart3, TrendingUp, Brain, Zap, AlertTriangle, CheckCircle, Clock, Target } from 'lucide-react';
 
 interface StatsProps {
   analytics: {
@@ -25,13 +25,17 @@ const BusinessDashboardStats: React.FC<StatsProps> = ({ analytics }) => {
       value: analytics.totalInsights,
       icon: Brain,
       color: 'from-blue-500 to-cyan-500',
+      bgColor: 'bg-blue-50',
+      textColor: 'text-blue-700',
       description: 'Generated insights'
     },
     {
       title: 'Avg. Confidence',
       value: `${Math.round(analytics.averageConfidence * 100)}%`,
-      icon: TrendingUp,
+      icon: Target,
       color: 'from-green-500 to-emerald-500',
+      bgColor: 'bg-green-50',
+      textColor: 'text-green-700',
       description: 'AI confidence level'
     },
     {
@@ -39,6 +43,8 @@ const BusinessDashboardStats: React.FC<StatsProps> = ({ analytics }) => {
       value: analytics.insightsByType.analysis || 0,
       icon: BarChart3,
       color: 'from-purple-500 to-pink-500',
+      bgColor: 'bg-purple-50',
+      textColor: 'text-purple-700',
       description: 'Business analyses'
     },
     {
@@ -46,6 +52,8 @@ const BusinessDashboardStats: React.FC<StatsProps> = ({ analytics }) => {
       value: analytics.insightsByType.automation || 0,
       icon: Zap,
       color: 'from-orange-500 to-red-500',
+      bgColor: 'bg-orange-50',
+      textColor: 'text-orange-700',
       description: 'Process improvements'
     }
   ];
@@ -59,6 +67,8 @@ const BusinessDashboardStats: React.FC<StatsProps> = ({ analytics }) => {
         value: highPriority,
         icon: AlertTriangle,
         color: 'from-red-500 to-pink-500',
+        bgColor: 'bg-red-50',
+        textColor: 'text-red-700',
         description: 'Urgent items'
       });
     }
@@ -71,25 +81,32 @@ const BusinessDashboardStats: React.FC<StatsProps> = ({ analytics }) => {
       value: analytics.recentActivity,
       icon: Clock,
       color: 'from-teal-500 to-blue-500',
+      bgColor: 'bg-teal-50',
+      textColor: 'text-teal-700',
       description: 'Last 24 hours'
     });
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {statCards.slice(0, 4).map((stat, index) => {
         const Icon = stat.icon;
         return (
-          <Card key={index} className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl hover:from-white/15 hover:to-white/10 transition-all duration-300">
+          <Card key={index} className="shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
-                <div className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-lg flex items-center justify-center shadow-lg`}>
-                  <Icon className="w-6 h-6 text-white" />
+                <div className={`w-14 h-14 bg-gradient-to-r ${stat.color} rounded-2xl flex items-center justify-center shadow-lg`}>
+                  <Icon className="w-7 h-7 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-white/60 text-sm font-medium">{stat.title}</h3>
-                  <p className="text-2xl font-bold text-white">{stat.value}</p>
-                  <p className="text-white/40 text-xs">{stat.description}</p>
+                  <h3 className="text-gray-600 text-sm font-medium mb-1">{stat.title}</h3>
+                  <p className="text-3xl font-bold text-gray-800 mb-1">{stat.value}</p>
+                  <p className="text-gray-500 text-xs">{stat.description}</p>
+                </div>
+              </div>
+              <div className={`mt-4 p-2 ${stat.bgColor} rounded-lg`}>
+                <div className={`text-xs font-medium ${stat.textColor}`}>
+                  Analytics Dashboard
                 </div>
               </div>
             </CardContent>

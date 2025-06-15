@@ -10,7 +10,8 @@ import {
   Share2, 
   Bookmark,
   TrendingUp,
-  AlertTriangle
+  AlertTriangle,
+  Clock
 } from 'lucide-react';
 
 interface AIInsight {
@@ -42,37 +43,54 @@ const BusinessInsightCard: React.FC<BusinessInsightCardProps> = ({
   
   const getPriorityColor = (priority?: string) => {
     switch (priority) {
-      case 'high': return 'bg-red-500/20 text-red-400 border-red-500/30';
-      case 'medium': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'low': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      default: return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'high': return 'bg-red-50 text-red-700 border-red-200';
+      case 'medium': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+      case 'low': return 'bg-green-50 text-green-700 border-green-200';
+      default: return 'bg-blue-50 text-blue-700 border-blue-200';
     }
   };
 
+  const getPriorityIcon = (priority?: string) => {
+    switch (priority) {
+      case 'high': return AlertTriangle;
+      case 'medium': return TrendingUp;
+      case 'low': return CheckCircle;
+      default: return CheckCircle;
+    }
+  };
+
+  const PriorityIcon = getPriorityIcon(insight.priority);
+
   return (
-    <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl">
-      <CardHeader>
+    <Card className="shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300">
+      <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className={`w-10 h-10 bg-gradient-to-r ${typeConfig.color} rounded-lg flex items-center justify-center`}>
-              <Icon className="w-5 h-5 text-white" />
+          <div className="flex items-center space-x-4">
+            <div className={`w-12 h-12 bg-gradient-to-r ${typeConfig.color} rounded-xl flex items-center justify-center shadow-md`}>
+              <Icon className="w-6 h-6 text-white" />
             </div>
             <div>
-              <CardTitle className="text-white">{typeConfig.label}</CardTitle>
-              <p className="text-white/60 text-sm">{insight.timestamp.toLocaleString()}</p>
+              <CardTitle className="text-lg text-gray-800">{typeConfig.label}</CardTitle>
+              <p className="text-gray-500 text-sm flex items-center">
+                <Clock className="w-3 h-3 mr-1" />
+                {insight.timestamp.toLocaleString()}
+              </p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
+            {insight.category && (
+              <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                {insight.category}
+              </Badge>
+            )}
             {insight.priority && (
               <Badge className={getPriorityColor(insight.priority)}>
-                {insight.priority === 'high' && <AlertTriangle className="w-3 h-3 mr-1" />}
-                {insight.priority === 'medium' && <TrendingUp className="w-3 h-3 mr-1" />}
-                {insight.priority === 'low' && <CheckCircle className="w-3 h-3 mr-1" />}
+                <PriorityIcon className="w-3 h-3 mr-1" />
                 {insight.priority} priority
               </Badge>
             )}
             {insight.confidence && (
-              <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+              <Badge className="bg-green-50 text-green-700 border-green-200">
                 <CheckCircle className="w-3 h-3 mr-1" />
                 {Math.round(insight.confidence * 100)}% confidence
               </Badge>
@@ -80,22 +98,24 @@ const BusinessInsightCard: React.FC<BusinessInsightCardProps> = ({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="prose prose-invert max-w-none">
-          <p className="text-white/80 whitespace-pre-wrap">{insight.content}</p>
+      <CardContent className="space-y-6">
+        <div className="prose prose-gray max-w-none">
+          <div className="text-gray-700 leading-relaxed whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border border-gray-200">
+            {insight.content}
+          </div>
         </div>
 
         {insight.actionItems && insight.actionItems.length > 0 && (
-          <div className="space-y-2">
-            <h4 className="text-white font-medium flex items-center">
-              <CheckCircle className="w-4 h-4 mr-2" />
+          <div className="space-y-3">
+            <h4 className="text-gray-800 font-semibold flex items-center">
+              <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
               Action Items
             </h4>
             <div className="space-y-2">
               {insight.actionItems.map((item, index) => (
-                <div key={index} className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0" />
-                  <p className="text-white/70 text-sm">{item}</p>
+                <div key={index} className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0" />
+                  <p className="text-green-800 text-sm font-medium">{item}</p>
                 </div>
               ))}
             </div>
@@ -103,29 +123,29 @@ const BusinessInsightCard: React.FC<BusinessInsightCardProps> = ({
         )}
 
         {insight.suggestions && insight.suggestions.length > 0 && (
-          <div className="space-y-2">
-            <h4 className="text-white font-medium flex items-center">
-              <Lightbulb className="w-4 h-4 mr-2" />
+          <div className="space-y-3">
+            <h4 className="text-gray-800 font-semibold flex items-center">
+              <Lightbulb className="w-5 h-5 mr-2 text-yellow-600" />
               Key Suggestions
             </h4>
             <div className="space-y-2">
               {insight.suggestions.map((suggestion, index) => (
-                <div key={index} className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0" />
-                  <p className="text-white/70 text-sm">{suggestion}</p>
+                <div key={index} className="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0" />
+                  <p className="text-yellow-800 text-sm">{suggestion}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-4 border-t border-white/10">
+        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
           <div className="flex space-x-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => onSave(insight)}
-              className="text-white/70 border-white/20 hover:bg-white/10"
+              className="border-purple-200 text-purple-600 hover:bg-purple-50"
             >
               <Bookmark className="w-4 h-4 mr-1" />
               Save
@@ -134,7 +154,7 @@ const BusinessInsightCard: React.FC<BusinessInsightCardProps> = ({
               variant="outline"
               size="sm"
               onClick={() => onExport(insight)}
-              className="text-white/70 border-white/20 hover:bg-white/10"
+              className="border-blue-200 text-blue-600 hover:bg-blue-50"
             >
               <Download className="w-4 h-4 mr-1" />
               Export
@@ -143,7 +163,7 @@ const BusinessInsightCard: React.FC<BusinessInsightCardProps> = ({
           <Button
             variant="outline"
             size="sm"
-            className="text-white/70 border-white/20 hover:bg-white/10"
+            className="border-gray-200 text-gray-600 hover:bg-gray-50"
           >
             <Share2 className="w-4 h-4 mr-1" />
             Share
