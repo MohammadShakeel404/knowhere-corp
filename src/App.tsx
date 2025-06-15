@@ -14,6 +14,7 @@ import Signup from '@/pages/Signup';
 import Profile from '@/pages/Profile';
 import NotFound from '@/pages/NotFound';
 import AIBusiness from '@/pages/AIBusiness';
+import ServiceDetails from '@/pages/ServiceDetails';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -29,6 +30,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/features" element={<Features />} />
+              <Route path="/services/:serviceSlug" element={<ServiceDetails />} />
               <Route path="/ai" element={<AI />} />
               <Route path="/ai-business" element={<AIBusiness />} />
               <Route path="/pricing" element={<Pricing />} />

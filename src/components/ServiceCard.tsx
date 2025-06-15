@@ -2,6 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, LucideIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface ServiceCardProps {
   service: {
@@ -16,6 +17,9 @@ interface ServiceCardProps {
 
 export const ServiceCard = ({ service, index }: ServiceCardProps) => {
   const { icon: Icon, title, description, features } = service;
+  
+  // Convert title to URL-friendly slug
+  const serviceSlug = title.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and');
 
   return (
     <div className="group relative">
@@ -47,13 +51,15 @@ export const ServiceCard = ({ service, index }: ServiceCardProps) => {
             ))}
           </div>
           
-          <Button 
-            variant="ghost" 
-            className="text-white/80 hover:text-white hover:bg-white/10 group/btn p-0 h-auto font-light"
-          >
-            Explore Service
-            <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform duration-200" />
-          </Button>
+          <Link to={`/services/${serviceSlug}`}>
+            <Button 
+              variant="ghost" 
+              className="text-white/80 hover:text-white hover:bg-white/10 group/btn p-0 h-auto font-light"
+            >
+              Explore Service
+              <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform duration-200" />
+            </Button>
+          </Link>
         </CardContent>
       </Card>
     </div>
