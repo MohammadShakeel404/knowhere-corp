@@ -34,6 +34,7 @@ function App() {
               <Route path="/services/:serviceSlug" element={<ServiceDetails />} />
               <Route path="/ai" element={<AI />} />
               <Route path="/ai-business" element={<AIBusiness />} />
+              <Route path="/ai-branding" element={<AIBusinessBranding />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
