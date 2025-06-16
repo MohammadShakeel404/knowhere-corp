@@ -146,32 +146,50 @@ export type Database = {
       }
       projects: {
         Row: {
+          branding_data: Json | null
           created_at: string
+          deployment_config: Json | null
           description: string | null
+          generated_code: Json | null
+          github_repo: string | null
           id: string
+          live_url: string | null
           name: string
-          project_type: string | null
-          status: string | null
+          project_type: Database["public"]["Enums"]["project_type"] | null
+          requirements: Json | null
+          status: Database["public"]["Enums"]["project_status"] | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          branding_data?: Json | null
           created_at?: string
+          deployment_config?: Json | null
           description?: string | null
+          generated_code?: Json | null
+          github_repo?: string | null
           id?: string
+          live_url?: string | null
           name: string
-          project_type?: string | null
-          status?: string | null
+          project_type?: Database["public"]["Enums"]["project_type"] | null
+          requirements?: Json | null
+          status?: Database["public"]["Enums"]["project_status"] | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          branding_data?: Json | null
           created_at?: string
+          deployment_config?: Json | null
           description?: string | null
+          generated_code?: Json | null
+          github_repo?: string | null
           id?: string
+          live_url?: string | null
           name?: string
-          project_type?: string | null
-          status?: string | null
+          project_type?: Database["public"]["Enums"]["project_type"] | null
+          requirements?: Json | null
+          status?: Database["public"]["Enums"]["project_status"] | null
           updated_at?: string
           user_id?: string
         }
@@ -228,6 +246,13 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      project_status:
+        | "draft"
+        | "generating"
+        | "completed"
+        | "deployed"
+        | "archived"
+      project_type: "website" | "web_app" | "mobile_app" | "landing_page"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -344,6 +369,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      project_status: [
+        "draft",
+        "generating",
+        "completed",
+        "deployed",
+        "archived",
+      ],
+      project_type: ["website", "web_app", "mobile_app", "landing_page"],
     },
   },
 } as const
