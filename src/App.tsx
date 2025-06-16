@@ -16,6 +16,7 @@ import AIBusiness from '@/pages/AIBusiness';
 import AIBusinessBranding from '@/pages/AIBusinessBranding';
 import ServiceDetails from '@/pages/ServiceDetails';
 import Admin from '@/pages/Admin';
+import WebsiteDevelopment from '@/pages/WebsiteDevelopment';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -35,6 +36,7 @@ function App() {
               <Route path="/ai" element={<AI />} />
               <Route path="/ai-business" element={<AIBusiness />} />
               <Route path="/ai-branding" element={<AIBusinessBranding />} />
+              <Route path="/website-development" element={<WebsiteDevelopment />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/about" element={<About />} />
