@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -41,13 +40,21 @@ interface ProjectFile {
 export class WebsiteDevelopmentService {
   static async createProject(projectData: ProjectData): Promise<Project> {
     try {
+      // Get the current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        throw new Error('User must be authenticated to create a project');
+      }
+
       const insertData: ProjectInsert = {
         name: projectData.name,
         description: projectData.description,
         project_type: projectData.project_type,
         requirements: projectData.requirements,
         branding_data: projectData.branding_data,
-        status: 'draft'
+        status: 'draft',
+        user_id: user.id
       };
 
       const { data, error } = await supabase
